@@ -740,3 +740,9 @@ public class Game implements ActionListener, KeyListener
 	{
 	}
 }
+
+//Points Count
+// 5 - Pause / Unpause
+//10 - Ctrl-X quit
+//10 - implement scoring system
+
