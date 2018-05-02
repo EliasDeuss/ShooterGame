@@ -444,13 +444,13 @@ public class Game implements ActionListener, KeyListener
 		// Move the existing Bombs down the playing field
 		for (int j = 0; j < bombs.size(); j++)
 		{
-			Bomb bombs = Bomb.get(j);
-			bombs.moveBomb();
+			Bomb bomb = bombs.get(j);
+			bomb.moveBomb();
 
 			// If the missile gets past the top of the playing field, remove it
-			if (bombs.getY() < 0 - bombs.getHeight())
+			if (bomb.getY() < 0 - bomb.getHeight())
 			{
-				gameFrame.getContentPane().remove(bombs.getBombImage());
+				gameFrame.getContentPane().remove(bomb.getBombImage());
 				bombs.remove(j);
 			}
 		}
