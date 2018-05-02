@@ -60,7 +60,7 @@ public class Game implements ActionListener, KeyListener
 	private ImageIcon imgBunker = new ImageIcon(getClass().getResource("asteroid.png")); //*
 
 	private JLabel lblShooter = new JLabel(imgShooter);
-	private int shooterX, shooterY;
+	private int shooterX, shooterY, AlienX, AlienY;
 
 	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
 	private boolean controlKeyPressed = false, missileFired = false, bombFired = false;
@@ -361,6 +361,9 @@ public class Game implements ActionListener, KeyListener
 		Alien tempAlien = new SmallAlien(0, 0);
 		int alienWidth = tempAlien.getWidth();
 		int alienHeight = tempAlien.getHeight();
+		
+		AlienX = (FIELD_WIDTH / 2) - 3;
+		AlienY = FIELD_HEIGHT - lblShooter.getHeight() - 48;
 
 		for (int i = 0; i < NUM_SMALL_ALIENS; i++)
 		{

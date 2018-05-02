@@ -12,8 +12,8 @@ public class SmallAlien implements Alien
 	private int alienYPos;
 	private int alienMoveDirection = 1; // 1 = move right, 2 = move left
 
-	private ImageIcon alienImage = new ImageIcon(getClass().getResource("ship-small.png"));
-	private JLabel alienLabel = new JLabel(alienImage);
+	public ImageIcon alienImage = new ImageIcon(getClass().getResource("ship-small.png"));
+	public JLabel alienLabel = new JLabel(alienImage);
 
 	// Constructor
 	public SmallAlien(int xPos, int yPos)
