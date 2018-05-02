@@ -63,7 +63,7 @@ public class Game implements ActionListener, KeyListener
 	private int shooterX, shooterY;
 
 	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
-	private boolean controlKeyPressed = false, missileFired = false;
+	private boolean controlKeyPressed = false, missileFired = false, bombFired = false;
 
 	private JLabel lblGameOver = new JLabel("Game Over!");
 	private Font fontGameOver = new Font("Helvetica", Font.BOLD, 24);
@@ -82,6 +82,7 @@ public class Game implements ActionListener, KeyListener
 	// objects that will be used throughout the game
 	ArrayList<Alien> aliens = new ArrayList<Alien>();
 	ArrayList<Missile> missiles = new ArrayList<Missile>();
+	ArrayList<Bomb> bombs = new ArrayList<Bomb>();
 	ArrayList<Bunker> bunkers = new ArrayList<Bunker>(); //*
 
 	public static void main(String[] args) 
@@ -441,16 +442,16 @@ public class Game implements ActionListener, KeyListener
 		}
 		
 		// Move the existing Bombs down the playing field
-		for (int j = 0; j < bomb.size(); j++)
+		for (int j = 0; j < bombs.size(); j++)
 		{
-			Bomb bombs = bomb.get(j);
+			Bomb bombs = Bomb.get(j);
 			bombs.moveBomb();
 
 			// If the missile gets past the top of the playing field, remove it
 			if (bombs.getY() < 0 - bombs.getHeight())
 			{
 				gameFrame.getContentPane().remove(bombs.getBombImage());
-				bomb.remove(j);
+				bombs.remove(j);
 			}
 		}
 
@@ -487,9 +488,9 @@ public class Game implements ActionListener, KeyListener
 			int y = FIELD_HEIGHT - lblShooter.getHeight() - 30 - bombHeight;
 
 			// Create a new 'Missile' object and add it to the 'missiles' ArrayList 
-			bomb.add(new bomb(x, y));
+			bombs.add(new Bomb(x, y));
 
-			missileFired = true;
+			bombFired = true;
 		}
 
 		// Draw the aliens (all types)
@@ -503,12 +504,12 @@ public class Game implements ActionListener, KeyListener
 		}
 		
 		// Draw the Bombs
-		for (int i = 0; i < bomb.size(); i++)
+		for (int i = 0; i < bombs.size(); i++)
 		{
-			Bomb bombs = bomb.get(i);
-			JLabel mLabel = bombs.getBombImage();
-			mLabel.setLocation(bombs.getX(), bombs.getY());
-			mLabel.setSize(bombs.getWidth(), bombs.getHeight());
+			Bomb bomb = bombs.get(i);
+			JLabel mLabel = bomb.getBombImage();
+			mLabel.setLocation(bomb.getX(), bomb.getY());
+			mLabel.setSize(bomb.getWidth(), bomb.getHeight());
 			gameFrame.add(mLabel);
 			}
 		
