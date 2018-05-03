@@ -26,7 +26,7 @@ public class Bomb
 	// Move the missile 'MISSILE_SPEED' pixels up the playing field
 	public void moveBomb()
 	{
-		bombYPos -= BOMB_SPEED;
+		bombYPos += BOMB_SPEED;
 	}
 
 	public JLabel getBombImage()

@@ -41,6 +41,7 @@ public class Game implements ActionListener, KeyListener
 	private int TOP_SCORE = 0;
 	private int DIF = 0;
 	private int PLAYER_LEVEL = 1;
+	private int BOMB_DROP = 0;
 	
 	private int play = 0;
 
@@ -422,6 +423,10 @@ public class Game implements ActionListener, KeyListener
 		if (pressedRight && shooterX < FIELD_WIDTH - lblShooter.getWidth() - 6 - 4)
 			shooterX += SHOOTER_SPEED;
 		lblShooter.setLocation(shooterX, shooterY);
+		
+		BOMB_DROP = BOMB_DROP + 1;
+		if (BOMB_DROP == 255)
+			BOMB_DROP = 0;
 
 		// Move the remaining aliens across the playing field
 		for (int i = 0; i < aliens.size(); i++)
@@ -479,7 +484,7 @@ public class Game implements ActionListener, KeyListener
 			missileFired = true;
 		}
 		
-		if (pressedSpace && !bombFired)
+		if (BOMB_DROP == 250)
 		{
 			// Determine the width and height of the missile being launched
 			Bomb tempBomb = new Bomb(0, 0);
@@ -488,7 +493,7 @@ public class Game implements ActionListener, KeyListener
 
 			// Set the starting position of the missile being launched 
 			int x = shooterX + (lblShooter.getWidth() / 2) - (bombWidth / 2);
-			int y = FIELD_HEIGHT - lblShooter.getHeight() - 30 - bombHeight;
+			int y = 70;
 
 			// Create a new 'Missile' object and add it to the 'missiles' ArrayList 
 			bombs.add(new Bomb(x, y));
