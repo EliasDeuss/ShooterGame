@@ -492,10 +492,10 @@ public class Game implements ActionListener, KeyListener
 			int bombHeight = tempBomb.getHeight();
 
 			// Set the starting position of the missile being launched 
-			int x = shooterX + (lblShooter.getWidth() / 2) - (bombWidth / 2);
+			int x = aliens.get(1).getX() - (bombWidth / 2);
 			int y = 70;
 
-			// Create a new 'Missile' object and add it to the 'missiles' ArrayList 
+			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
 			bombs.add(new Bomb(x, y));
 
 			bombFired = true;
@@ -572,6 +572,10 @@ public class Game implements ActionListener, KeyListener
 																aliens.get(i).getWidth(), aliens.get(i).getHeight());
 					Rectangle rMissile = new Rectangle(missiles.get(j).getX(), missiles.get(j).getY(),
 																  missiles.get(j).getWidth(), missiles.get(j).getHeight());
+					Rectangle rBomb = new Rectangle(bombs.get(j).getX(), bombs.get(j).getY(),
+							  									bombs.get(j).getWidth(), bombs.get(j).getHeight());
+//					Rectangle rPlayer = new Rectangle(shooterX.get(j).getX(), bombs.get(j).getY(),
+//							  missiles.get(j).getWidth(), missiles.get(j).getHeight());
 
 					// If an alien and a missile intersect each other, remove both
 					// of them from the playing field and the ArrayLists
@@ -585,6 +589,15 @@ public class Game implements ActionListener, KeyListener
 						
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
 					}
+					
+					//If a Bomb Hits a player it will remove Health
+//					if (rBomb.intersects(rPlayer))
+//					{
+//						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
+//						bombs.remove(j);
+//						
+//						PLAYER_HEALTH = PLAYER_HEALTH - 25;
+//					}
 				}
 				catch (Exception error)
 				{
