@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -104,6 +105,8 @@ public class Game implements ActionListener, KeyListener
 		gameFrame.setLocationRelativeTo(null);
 		gameFrame.setResizable(false);
 		gameFrame.setFocusable(true);
+		
+		
 
 		// Set up the "Game Over" JLabel
 		lblGameOver.setVisible(false);
@@ -405,11 +408,11 @@ public class Game implements ActionListener, KeyListener
 
 		for (int i = 0; i < NUM_BUNKERS; i++)
 		{
-			// Set the starting positions of each of the aliens being placed
+			// Set the starting positions of each of the bunkers being placed
 			int x = (int) (Math.random() * (FIELD_WIDTH - bunkerWidth - 7) + 1);
 			int y = (int) ((Math.random() * (FIELD_HEIGHT/3 - bunkerHeight - 26 - lblShooter.getHeight() - 60))) + FIELD_HEIGHT*2/3;
 
-			// Create a new 'Alien' object and add it to the 'aliens' ArrayList 
+			// Create a new 'Bunker' object and add it to the 'aliens' ArrayList 
 			bunkers.add(new Bunker(x, y));
 		}
 	}
@@ -492,8 +495,12 @@ public class Game implements ActionListener, KeyListener
 			int bombHeight = tempBomb.getHeight();
 
 			// Set the starting position of the missile being launched 
-			int x = aliens.get(1).getX() - (bombWidth / 2);
-			int y = 70;
+			Random rand = new Random();
+			
+			int alienDATA = rand.nextInt(8) + 1;
+			
+			int x = aliens.get(alienDATA).getX() - (bombWidth / 2);
+			int y = aliens.get(alienDATA).getY();
 
 			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
 			bombs.add(new Bomb(x, y));
@@ -572,10 +579,6 @@ public class Game implements ActionListener, KeyListener
 																aliens.get(i).getWidth(), aliens.get(i).getHeight());
 					Rectangle rMissile = new Rectangle(missiles.get(j).getX(), missiles.get(j).getY(),
 																  missiles.get(j).getWidth(), missiles.get(j).getHeight());
-					Rectangle rBomb = new Rectangle(bombs.get(j).getX(), bombs.get(j).getY(),
-							  									bombs.get(j).getWidth(), bombs.get(j).getHeight());
-//					Rectangle rPlayer = new Rectangle(shooterX.get(j).getX(), bombs.get(j).getY(),
-//							  missiles.get(j).getWidth(), missiles.get(j).getHeight());
 
 					// If an alien and a missile intersect each other, remove both
 					// of them from the playing field and the ArrayLists
@@ -589,15 +592,42 @@ public class Game implements ActionListener, KeyListener
 						
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
 					}
+				}
+				catch (Exception error)
+				{
+				}
+			}
+		for (int i = 0; i < 1; i++)
+			for (int j = 0; j < bombs.size(); j++)
+			{
+				try
+				{
+
+					
+					Rectangle rBomb = new Rectangle(bombs.get(j).getX(), bombs.get(j).getY(),
+							  									bombs.get(j).getWidth(), bombs.get(j).getHeight());
+					Rectangle rPlayer = new Rectangle(shooterX, shooterY, 15, 10);
+					
+					Rectangle rBunker = new Rectangle(bunkers.get(i).getX(), bunkers.get(i).getY(),
+							bunkers.get(i).getWidth(), bunkers.get(i).getHeight());
+
 					
 					//If a Bomb Hits a player it will remove Health
-//					if (rBomb.intersects(rPlayer))
-//					{
-//						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
-//						bombs.remove(j);
-//						
-//						PLAYER_HEALTH = PLAYER_HEALTH - 25;
-//					}
+					if (rBomb.intersects(rPlayer))
+					{
+						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
+						bombs.remove(j);
+						
+						PLAYER_HEALTH = PLAYER_HEALTH - 25;
+						lblPlayerHealth.setText("Health: " + PLAYER_HEALTH);
+						
+					}
+					
+					if (rBomb.intersects(rBunker))
+					{
+						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
+						bombs.remove(j);
+					}
 				}
 				catch (Exception error)
 				{
