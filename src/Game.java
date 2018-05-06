@@ -34,11 +34,14 @@ public class Game implements ActionListener, KeyListener
 
 	private int NUM_SMALL_ALIENS = 8;
 	private int NUM_LARGE_ALIENS = 3;
-	private final int NUM_BUNKERS = 7; //*
+	private final int NUM_BUNKERS = 7;
+	
+	private int ALIENS_NUM = (NUM_SMALL_ALIENS + NUM_LARGE_ALIENS);
 
 	private int PLAYER_SCORE = 0;
 	private int PLAYER_HEALTH = 100;
 	private int PLAYER_LIVES = 3;
+	private int PLAYER_TIME_LEFT = 5000;
 	private int TOP_SCORE = 0;
 	private int DIF = 0;
 	private int PLAYER_LEVEL = 1;
@@ -76,6 +79,8 @@ public class Game implements ActionListener, KeyListener
 	private JLabel lblGameTopScore = new JLabel("Top Score: " + PLAYER_SCORE);
 	private JLabel lblPlayerHealth = new JLabel("Health: " + PLAYER_HEALTH);
 	private JLabel lblPlayerLevel = new JLabel("Level: " + PLAYER_LEVEL);
+	private JLabel lblPlayerTime = new JLabel("Time Left: " + PLAYER_TIME_LEFT);
+	private JLabel lblPlayerLives = new JLabel("Lives: " + PLAYER_LIVES);
 	
 	private JLabel lblGamePaused = new JLabel("Pause");
 	private JButton btnResume = new JButton("Resume") ;
@@ -130,6 +135,22 @@ public class Game implements ActionListener, KeyListener
 		lblPlayerHealth.setFont(fontGameOver);
 		lblPlayerHealth.setForeground(Color.WHITE);
 		gameFrame.add(lblPlayerHealth);
+		
+		//Set up the time JLabel
+		lblPlayerTime.setVisible(true);
+		lblPlayerTime.setSize(250, 30);
+		lblPlayerTime.setLocation(2,35);
+		lblPlayerTime.setFont(fontGameOver);
+		lblPlayerTime.setForeground(Color.WHITE);
+		gameFrame.add(lblPlayerTime);
+		
+		//Set up the lives JLabel
+		lblPlayerLives.setVisible(true);
+		lblPlayerLives.setSize(250, 30);
+		lblPlayerLives.setLocation(2,486);
+		lblPlayerLives.setFont(fontGameOver);
+		lblPlayerLives.setForeground(Color.WHITE);
+		gameFrame.add(lblPlayerLives);
 		
 		//Set up the level JLabel
 		lblPlayerLevel.setVisible(true);
@@ -412,13 +433,27 @@ public class Game implements ActionListener, KeyListener
 			int x = (int) (Math.random() * (FIELD_WIDTH - bunkerWidth - 7) + 1);
 			int y = (int) ((Math.random() * (FIELD_HEIGHT/3 - bunkerHeight - 26 - lblShooter.getHeight() - 60))) + FIELD_HEIGHT*2/3;
 
-			// Create a new 'Bunker' object and add it to the 'aliens' ArrayList 
+			// Create a new 'Bunker' object and add it to the 'bunker' ArrayList 
 			bunkers.add(new Bunker(x, y));
 		}
 	}
 
 	public void actionPerformed(ActionEvent event)
 	{
+		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
+		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
+		
+		if (PLAYER_HEALTH == 0)
+		{
+			PLAYER_HEALTH = 100;
+			PLAYER_LIVES = PLAYER_LIVES - 1;
+			
+			if (PLAYER_LIVES && PLAYER_HEALTH == 0)
+			{
+				
+			}
+		}
+		
 		// Change the shooter's position if the player is pressing the left
 		// or right arrow keys
 		if (pressedLeft && shooterX > 4)
@@ -458,7 +493,7 @@ public class Game implements ActionListener, KeyListener
 			Bomb bomb = bombs.get(j);
 			bomb.moveBomb();
 
-			// If the missile gets past the top of the playing field, remove it
+			// If the bomb gets past the bottom of the playing field, remove it
 			if (bomb.getY() < 0 - bomb.getHeight())
 			{
 				gameFrame.getContentPane().remove(bomb.getBombImage());
@@ -487,26 +522,28 @@ public class Game implements ActionListener, KeyListener
 			missileFired = true;
 		}
 		
-		if (BOMB_DROP == 250)
-		{
-			// Determine the width and height of the missile being launched
-			Bomb tempBomb = new Bomb(0, 0);
-			int bombWidth = tempBomb.getWidth();
-			int bombHeight = tempBomb.getHeight();
-
-			// Set the starting position of the missile being launched 
-			Random rand = new Random();
-			
-			int alienDATA = rand.nextInt(8) + 1;
-			
-			int x = aliens.get(alienDATA).getX() - (bombWidth / 2);
-			int y = aliens.get(alienDATA).getY();
-
-			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
-			bombs.add(new Bomb(x, y));
-
-			bombFired = true;
-		}
+//		if (BOMB_DROP == 250)
+//		{
+//			// Determine the width and height of the bomb being launched
+//			Bomb tempBomb = new Bomb(0, 0);
+//			int bombWidth = tempBomb.getWidth();
+//			int bombHeight = tempBomb.getHeight();
+//
+//			// Set the starting position of the bomb being launched 
+//			Random rand = new Random();
+//			
+//			int alienDATA = 0;
+//			
+//			alienDATA = rand.nextInt(ALIENS_NUM) + 1;
+//			
+//			int x = aliens.get(alienDATA).getX();
+//			int y = aliens.get(alienDATA).getY();
+//
+//			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
+//			bombs.add(new Bomb(x, y));
+//
+//			bombFired = true;
+//		}
 
 		// Draw the aliens (all types)
 		for (int i = 0; i < aliens.size(); i++)
@@ -623,6 +660,7 @@ public class Game implements ActionListener, KeyListener
 						
 					}
 					
+					//Removes Bomb if hits Bunker
 					if (rBomb.intersects(rBunker))
 					{
 						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
