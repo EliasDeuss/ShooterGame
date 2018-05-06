@@ -443,15 +443,23 @@ public class Game implements ActionListener, KeyListener
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
 		
+		//Stop's Game if time = 0
+		if (PLAYER_TIME_LEFT == 0)
+		{
+			timer.stop();
+			lblGameOver.setVisible(true);
+		}
+		
+		//Live's And health
 		if (PLAYER_HEALTH == 0)
 		{
 			PLAYER_HEALTH = 100;
 			PLAYER_LIVES = PLAYER_LIVES - 1;
 			
-			if (PLAYER_LIVES && PLAYER_HEALTH == 0)
-			{
-				
-			}
+//			if (PLAYER_LIVES && PLAYER_HEALTH == 0)
+//			{
+//				
+//			}
 		}
 		
 		// Change the shooter's position if the player is pressing the left
