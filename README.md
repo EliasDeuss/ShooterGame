@@ -1,8 +1,6 @@
 SpaceShooter
 =============
-- This is a simple game made in class 
-![](https://img.shields.io/github/release/pandao/editor.md.svg) ![]
-(https://img.shields.io/github/issues/pandao/editor.md.svg) ![
+- This is a simple game made in class
 
 > Screenshot 5/3/18
 
