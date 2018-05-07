@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -110,7 +114,6 @@ public class Game implements ActionListener, KeyListener
 		gameFrame.setLocationRelativeTo(null);
 		gameFrame.setResizable(false);
 		gameFrame.setFocusable(true);
-		
 		
 
 		// Set up the "Game Over" JLabel
@@ -459,6 +462,7 @@ public class Game implements ActionListener, KeyListener
 
 	public void actionPerformed(ActionEvent event)
 	{
+		
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
 		
@@ -695,49 +699,6 @@ public class Game implements ActionListener, KeyListener
 				{
 				}
 			}
-
-		// If all of the aliens have been destroyed, the game is over, so stop
-		// the Timer and remove any remaining missiles from the playing field 
-		if (aliens.size() == 0)
-		{
-			PLAYER_LEVEL = PLAYER_LEVEL + 1;
-			gameFrame.getContentPane().removeAll();
-			missiles.removeAll(missiles);
-			aliens.removeAll(aliens);
-			bunkers.removeAll(bunkers);
-			
-			lblGameOver.setVisible(false);
-			lblGameOverScore.setVisible(false);
-			lblGameTopScore.setVisible(false);
-			
-			lblGameScore.setText("Score: " + PLAYER_SCORE);
-			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
-			
-			PLAYER_TIME_LEFT = PLAYER_TIME_LEFT + 1500;
-			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
-			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
-			
-			setUpShooter();
-			setUpLargeAliens();
-			setUpSmallAliens();
-			setUpBunkers();
-			
-			lblGameScore.setVisible(true);
-			lblPlayerLevel.setVisible(true);
-			lblPlayerHealth.setVisible(true);
-			lblPlayerTime.setVisible(true);
-			lblPlayerLives.setVisible(true);
-			
-			gameFrame.add(lblGameScore);
-			gameFrame.add(lblPlayerLevel);
-			gameFrame.add(lblPlayerHealth);
-			gameFrame.add(lblPlayerTime);
-			gameFrame.add(lblPlayerLives);
-			
-			
-			gameFrame.repaint();
-
-		}
 		
 		for (int i = 0; i < bunkers.size(); i++)
 			for (int j = 0; j < missiles.size(); j++)
@@ -761,6 +722,50 @@ public class Game implements ActionListener, KeyListener
 				{
 				}
 			}
+		
+		// If all of the aliens have been destroyed, the game is over, so stop
+		// the Timer and remove any remaining missiles from the playing field 
+		if (aliens.size() == 0)
+		{
+			PLAYER_LEVEL = PLAYER_LEVEL + 1;
+			gameFrame.getContentPane().removeAll();
+			missiles.removeAll(missiles);
+			aliens.removeAll(aliens);
+			bunkers.removeAll(bunkers);
+			
+			lblGameOver.setVisible(false);
+			lblGameOverScore.setVisible(false);
+			lblGameTopScore.setVisible(false);
+			
+			lblGameScore.setText("Score: " + PLAYER_SCORE);
+			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
+			
+			PLAYER_TIME_LEFT = PLAYER_TIME_LEFT + 1500;
+			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
+			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
+			
+			
+			setUpShooter();
+			setUpLargeAliens();
+			setUpSmallAliens();
+			setUpBunkers();
+			
+			lblGameScore.setVisible(true);
+			lblPlayerLevel.setVisible(true);
+			lblPlayerHealth.setVisible(true);
+			lblPlayerTime.setVisible(true);
+			lblPlayerLives.setVisible(true);
+			
+			gameFrame.add(lblGameScore);
+			gameFrame.add(lblPlayerLevel);
+			gameFrame.add(lblPlayerHealth);
+			gameFrame.add(lblPlayerTime);
+			gameFrame.add(lblPlayerLives);
+			
+			
+			gameFrame.repaint();
+
+		}
 	}
 
 	// See if the player has PRESSED a key
