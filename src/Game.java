@@ -236,18 +236,37 @@ public class Game implements ActionListener, KeyListener
 				    		gameFrame.getContentPane().removeAll();
 							missiles.removeAll(missiles);
 							aliens.removeAll(aliens);
+							bunkers.removeAll(bunkers);
 							lblGameOver.setVisible(false);
 							lblGameOverScore.setVisible(false);
 							lblGameTopScore.setVisible(false);
+							
 							setUpShooter();
 							setUpLargeAliens();
 							setUpSmallAliens();
+							setUpBunkers();
+							
 							PLAYER_SCORE = 0;
+							PLAYER_HEALTH = 100;
+							PLAYER_LIVES = 3;
+							PLAYER_LEVEL = 1;
+							PLAYER_TIME_LEFT = 5000;
+							
 							lblGameScore.setText("Score: " + PLAYER_SCORE);
 							lblGameScore.setVisible(true);
+							lblPlayerHealth.setVisible(true);
+							lblPlayerTime.setVisible(true);
+							lblPlayerLives.setVisible(true);
+							lblPlayerLevel.setVisible(true);
+							
+							
 							timer.start();
 							gameFrame.repaint();
 							gameFrame.add(lblGameScore);
+							gameFrame.add(lblPlayerHealth);
+							gameFrame.add(lblPlayerTime);
+							gameFrame.add(lblPlayerLives);
+							gameFrame.add(lblPlayerLevel);
 						}
 				    }
 				  }
@@ -446,8 +465,10 @@ public class Game implements ActionListener, KeyListener
 		//Stop's Game if time = 0
 		if (PLAYER_TIME_LEFT == 0)
 		{
-			timer.stop();
 			lblGameOver.setVisible(true);
+			lblGameOverScore.setVisible(true);
+			
+			timer.stop();
 		}
 		
 		//Live's And health
