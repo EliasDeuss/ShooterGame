@@ -551,28 +551,23 @@ public class Game implements ActionListener, KeyListener
 			missileFired = true;
 		}
 		
-//		if (BOMB_DROP == 250)
-//		{
-//			// Determine the width and height of the bomb being launched
-//			Bomb tempBomb = new Bomb(0, 0);
-//			int bombWidth = tempBomb.getWidth();
-//			int bombHeight = tempBomb.getHeight();
-//
-//			// Set the starting position of the bomb being launched 
-//			Random rand = new Random();
-//			
-//			int alienDATA = 0;
-//			
-//			alienDATA = rand.nextInt(ALIENS_NUM) + 1;
-//			
-//			int x = aliens.get(alienDATA).getX();
-//			int y = aliens.get(alienDATA).getY();
-//
-//			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
-//			bombs.add(new Bomb(x, y));
-//
-//			bombFired = true;
-//		}
+		if (BOMB_DROP == 250)
+		{
+			// Set the starting position of the bomb being launched 
+			Random rand = new Random();
+			
+			int alienDATA = 0;
+			
+			alienDATA = rand.nextInt(aliens.size());
+			
+			int x = aliens.get(alienDATA).getX();
+			int y = aliens.get(alienDATA).getY();
+
+			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
+			bombs.add(new Bomb(x, y));
+
+			bombFired = true;
+		}
 
 		// Draw the aliens (all types)
 		for (int i = 0; i < aliens.size(); i++)
@@ -705,56 +700,43 @@ public class Game implements ActionListener, KeyListener
 		// the Timer and remove any remaining missiles from the playing field 
 		if (aliens.size() == 0)
 		{
-			if (PLAYER_LEVEL == 1)
-			{
-				
-	    		gameFrame.getContentPane().removeAll();
-				missiles.removeAll(missiles);
-				aliens.removeAll(aliens);
-				lblGameOver.setVisible(false);
-				lblGameOverScore.setVisible(false);
-				lblGameTopScore.setVisible(false);
-				lblGameScore.setText("Score: " + PLAYER_SCORE);
-				lblGameScore.setVisible(true);
-				lblPlayerHealth.setVisible(true);
-				
-				PLAYER_LEVEL = 2;
-				lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
-				timer.start();
-				gameFrame.repaint();
-				gameFrame.add(lblGameScore);
-			}
+			PLAYER_LEVEL = PLAYER_LEVEL + 1;
+			gameFrame.getContentPane().removeAll();
+			missiles.removeAll(missiles);
+			aliens.removeAll(aliens);
+			bunkers.removeAll(bunkers);
 			
-			if (PLAYER_LEVEL == 2)
-			{
-				NUM_SMALL_ALIENS = 10;
-				NUM_LARGE_ALIENS = 4;
-				
-	    		gameFrame.getContentPane().removeAll();
-				missiles.removeAll(missiles);
-				aliens.removeAll(aliens);
-				lblGameOver.setVisible(false);
-				lblGameOverScore.setVisible(false);
-				lblGameTopScore.setVisible(false);
-				setUpShooter();
-				setUpLargeAliens();
-				setUpSmallAliens();
-				lblPlayerHealth.setVisible(true);
-				lblPlayerLevel.setVisible(true);
-				lblGameScore.setText("Score: " + PLAYER_SCORE);
-				lblGameScore.setVisible(true);
-				lblPlayerHealth.setVisible(true);
-				
-				PLAYER_LEVEL = 2;
-				lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
-				timer.start();
-				gameFrame.repaint();
-				gameFrame.add(lblGameScore);
-				gameFrame.add(lblPlayerLevel);
-				gameFrame.add(lblPlayerHealth);
-			}
-
+			lblGameOver.setVisible(false);
+			lblGameOverScore.setVisible(false);
+			lblGameTopScore.setVisible(false);
+			
+			lblGameScore.setText("Score: " + PLAYER_SCORE);
+			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
+			
+			PLAYER_TIME_LEFT = PLAYER_TIME_LEFT + 1500;
+			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
+			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
+			
+			setUpShooter();
+			setUpLargeAliens();
+			setUpSmallAliens();
+			setUpBunkers();
+			
+			lblGameScore.setVisible(true);
+			lblPlayerLevel.setVisible(true);
+			lblPlayerHealth.setVisible(true);
+			lblPlayerTime.setVisible(true);
+			lblPlayerLives.setVisible(true);
+			
+			gameFrame.add(lblGameScore);
+			gameFrame.add(lblPlayerLevel);
+			gameFrame.add(lblPlayerHealth);
+			gameFrame.add(lblPlayerTime);
+			gameFrame.add(lblPlayerLives);
+			
+			
 			gameFrame.repaint();
+
 		}
 		
 		for (int i = 0; i < bunkers.size(); i++)
