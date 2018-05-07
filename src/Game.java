@@ -38,7 +38,7 @@ public class Game implements ActionListener, KeyListener
 
 	private int NUM_SMALL_ALIENS = 8;
 	private int NUM_LARGE_ALIENS = 3;
-	private final int NUM_BUNKERS = 7;
+	private int NUM_BUNKERS = 7;
 	
 	private int ALIENS_NUM = (NUM_SMALL_ALIENS + NUM_LARGE_ALIENS);
 
@@ -51,7 +51,7 @@ public class Game implements ActionListener, KeyListener
 	private int PLAYER_LEVEL = 1;
 	private int BOMB_DROP = 0;
 	
-	private int play = 0;
+	private boolean play = true;
 
 	private JFrame gameFrame;
 	private Timer timer;
@@ -81,20 +81,19 @@ public class Game implements ActionListener, KeyListener
 	private JLabel lblGameOverScore = new JLabel("Score: " + PLAYER_SCORE);
 	private JLabel lblGameScore = new JLabel("Score: " + PLAYER_SCORE);
 	private JLabel lblGameTopScore = new JLabel("Top Score: " + PLAYER_SCORE);
-	private JLabel lblPlayerHealth = new JLabel("Health: " + PLAYER_HEALTH);
 	private JLabel lblPlayerLevel = new JLabel("Level: " + PLAYER_LEVEL);
 	private JLabel lblPlayerTime = new JLabel("Time Left: " + PLAYER_TIME_LEFT);
 	private JLabel lblPlayerLives = new JLabel("Lives: " + PLAYER_LIVES);
 	
 	private JLabel lblGamePaused = new JLabel("Pause");
-	private JButton btnResume = new JButton("Resume") ;
 
 	// Create ArrayLists to hold the 'Alien' objects (all types) and the 'Missile'
 	// objects that will be used throughout the game
 	ArrayList<Alien> aliens = new ArrayList<Alien>();
 	ArrayList<Missile> missiles = new ArrayList<Missile>();
 	ArrayList<Bomb> bombs = new ArrayList<Bomb>();
-	ArrayList<Bunker> bunkers = new ArrayList<Bunker>(); //*
+	ArrayList<Bunker> bunkers = new ArrayList<Bunker>(); 
+	ArrayList<LivesPacks> helthpacks = new ArrayList<LivesPacks>();
 
 	public static void main(String[] args) 
 	{
@@ -131,14 +130,6 @@ public class Game implements ActionListener, KeyListener
 		lblGameScore.setForeground(Color.WHITE);
 		gameFrame.add(lblGameScore);
 		
-		//Set up the health JLabel
-		lblPlayerHealth.setVisible(true);
-		lblPlayerHealth.setSize(textWidth, 30);
-		lblPlayerHealth.setLocation(2,1);
-		lblPlayerHealth.setFont(fontGameOver);
-		lblPlayerHealth.setForeground(Color.WHITE);
-		gameFrame.add(lblPlayerHealth);
-		
 		//Set up the time JLabel
 		lblPlayerTime.setVisible(true);
 		lblPlayerTime.setSize(250, 30);
@@ -149,8 +140,8 @@ public class Game implements ActionListener, KeyListener
 		
 		//Set up the lives JLabel
 		lblPlayerLives.setVisible(true);
-		lblPlayerLives.setSize(250, 30);
-		lblPlayerLives.setLocation(2,486);
+		lblPlayerLives.setSize(200,30);
+		lblPlayerLives.setLocation(2,1);
 		lblPlayerLives.setFont(fontGameOver);
 		lblPlayerLives.setForeground(Color.WHITE);
 		gameFrame.add(lblPlayerLives);
@@ -181,31 +172,10 @@ public class Game implements ActionListener, KeyListener
 		
 		lblGamePaused.setVisible(false);
 		lblGamePaused.setSize(textWidth, 40);
-		lblGamePaused.setLocation(410,170);
+		lblGamePaused.setLocation(410,250);
 		lblGamePaused.setFont(fontGameOver);
 		lblGamePaused.setForeground(Color.WHITE);
 		gameFrame.add(lblGamePaused);
-		
-		btnResume.setVisible(false);
-		btnResume.setSize(150, 25);
-		btnResume.setLocation(370,210);
-		btnResume.setFont(fontGameOver);
-		btnResume.setForeground(Color.BLACK);
-		btnResume.setActionCommand("resume");
-		btnResume.addActionListener(
-				  new ActionListener() {
-				    public void actionPerformed(ActionEvent e) {
-				    	if (e.getActionCommand().equals("resume"))
-						{
-							timer.start();
-							play = 0;
-							lblGamePaused.setVisible(false);
-							btnResume.setVisible(false);
-						}
-				    }
-				  }
-				);
-		gameFrame.add(btnResume);
 
 		setUpShooter();
 		setUpLargeAliens();
@@ -240,6 +210,7 @@ public class Game implements ActionListener, KeyListener
 							missiles.removeAll(missiles);
 							aliens.removeAll(aliens);
 							bunkers.removeAll(bunkers);
+							bombs.removeAll(bombs);
 							lblGameOver.setVisible(false);
 							lblGameOverScore.setVisible(false);
 							lblGameTopScore.setVisible(false);
@@ -256,17 +227,20 @@ public class Game implements ActionListener, KeyListener
 							PLAYER_TIME_LEFT = 5000;
 							
 							lblGameScore.setText("Score: " + PLAYER_SCORE);
+							lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
+							lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
 							lblGameScore.setVisible(true);
-							lblPlayerHealth.setVisible(true);
 							lblPlayerTime.setVisible(true);
 							lblPlayerLives.setVisible(true);
 							lblPlayerLevel.setVisible(true);
 							
+							NUM_SMALL_ALIENS = 8;
+							NUM_LARGE_ALIENS = 3;
+							NUM_BUNKERS = 7;
 							
 							timer.start();
 							gameFrame.repaint();
 							gameFrame.add(lblGameScore);
-							gameFrame.add(lblPlayerHealth);
 							gameFrame.add(lblPlayerTime);
 							gameFrame.add(lblPlayerLives);
 							gameFrame.add(lblPlayerLevel);
@@ -304,7 +278,6 @@ public class Game implements ActionListener, KeyListener
 							PLAYER_SCORE = 0;
 							lblGameScore.setText("Score: " + PLAYER_SCORE);
 							lblGameScore.setVisible(true);
-							lblPlayerHealth.setVisible(true);
 							
 							timer.start();
 							gameFrame.repaint();
@@ -339,7 +312,6 @@ public class Game implements ActionListener, KeyListener
 							PLAYER_SCORE = 0;
 							lblGameScore.setText("Score: " + PLAYER_SCORE);
 							lblGameScore.setVisible(true);
-							lblPlayerHealth.setVisible(true);
 							
 							timer.start();
 							gameFrame.repaint();
@@ -635,6 +607,8 @@ public class Game implements ActionListener, KeyListener
 		// The 'try-catch' exception trapping is needed to prevent an error from
 		// occurring when an element is removed from the 'aliens' and 'missiles'
 		// ArrayLists, causing the 'for' loops to end prematurely 
+		
+		//Missiles hit alien
 		for (int i = 0; i < aliens.size(); i++)
 			for (int j = 0; j < missiles.size(); j++)
 			{
@@ -653,6 +627,7 @@ public class Game implements ActionListener, KeyListener
 						aliens.remove(i);
 						gameFrame.getContentPane().remove(missiles.get(j).getMissileImage());
 						missiles.remove(j);
+						
 						PLAYER_SCORE = PLAYER_SCORE + 5;
 						
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
@@ -662,20 +637,16 @@ public class Game implements ActionListener, KeyListener
 				{
 				}
 			}
+		
+		//Gets rid of bomb if hits player
 		for (int i = 0; i < 1; i++)
 			for (int j = 0; j < bombs.size(); j++)
 			{
 				try
 				{
-
-					
 					Rectangle rBomb = new Rectangle(bombs.get(j).getX(), bombs.get(j).getY(),
 							  									bombs.get(j).getWidth(), bombs.get(j).getHeight());
 					Rectangle rPlayer = new Rectangle(shooterX, shooterY, 15, 10);
-					
-					Rectangle rBunker = new Rectangle(bunkers.get(i).getX(), bunkers.get(i).getY(),
-							bunkers.get(i).getWidth(), bunkers.get(i).getHeight());
-
 					
 					//If a Bomb Hits a player it will remove Health
 					if (rBomb.intersects(rPlayer))
@@ -683,16 +654,8 @@ public class Game implements ActionListener, KeyListener
 						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
 						bombs.remove(j);
 						
-						PLAYER_HEALTH = PLAYER_HEALTH - 25;
-						lblPlayerHealth.setText("Health: " + PLAYER_HEALTH);
-						
-					}
-					
-					//Removes Bomb if hits Bunker
-					if (rBomb.intersects(rBunker))
-					{
-						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
-						bombs.remove(j);
+						PLAYER_LIVES = PLAYER_LIVES - 1;
+						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
 					}
 				}
 				catch (Exception error)
@@ -700,6 +663,37 @@ public class Game implements ActionListener, KeyListener
 				}
 			}
 		
+		//Bombs hit bunker
+		for (int i = 0; i < bunkers.size(); i++)
+			for (int j = 0; j < bombs.size(); j++)
+			{
+				try
+				{
+					Rectangle rBomb = new Rectangle(bombs.get(j).getX(), bombs.get(j).getY(),
+									bombs.get(j).getWidth(), bombs.get(j).getHeight());
+					
+					Rectangle rBunker = new Rectangle(bunkers.get(i).getX(), bunkers.get(i).getY(),
+									bunkers.get(i).getWidth(), bunkers.get(i).getHeight());
+
+					// If an alien and a missile intersect each other, remove both
+					// of them from the playing field and the ArrayLists
+					
+					//Removes Bomb if hits Bunker
+					if (rBomb.intersects(rBunker))
+					{
+						gameFrame.getContentPane().remove(bombs.get(j).getBombImage());
+						bombs.remove(j);
+						
+//						gameFrame.getContentPane().remove(bunkers.get(j).getBunkerImage());
+//						bunkers.remove(j);
+					}
+				}
+				catch (Exception error)
+				{
+				}
+			}
+		
+		//Missiles Hit Bunker
 		for (int i = 0; i < bunkers.size(); i++)
 			for (int j = 0; j < missiles.size(); j++)
 			{
@@ -732,6 +726,7 @@ public class Game implements ActionListener, KeyListener
 			missiles.removeAll(missiles);
 			aliens.removeAll(aliens);
 			bunkers.removeAll(bunkers);
+			bombs.removeAll(bombs);
 			
 			lblGameOver.setVisible(false);
 			lblGameOverScore.setVisible(false);
@@ -744,7 +739,6 @@ public class Game implements ActionListener, KeyListener
 			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
 			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
 			
-			
 			setUpShooter();
 			setUpLargeAliens();
 			setUpSmallAliens();
@@ -752,16 +746,13 @@ public class Game implements ActionListener, KeyListener
 			
 			lblGameScore.setVisible(true);
 			lblPlayerLevel.setVisible(true);
-			lblPlayerHealth.setVisible(true);
 			lblPlayerTime.setVisible(true);
 			lblPlayerLives.setVisible(true);
 			
 			gameFrame.add(lblGameScore);
 			gameFrame.add(lblPlayerLevel);
-			gameFrame.add(lblPlayerHealth);
 			gameFrame.add(lblPlayerTime);
 			gameFrame.add(lblPlayerLives);
-			
 			
 			gameFrame.repaint();
 
@@ -787,28 +778,56 @@ public class Game implements ActionListener, KeyListener
 			gameFrame.getContentPane().removeAll();
 			missiles.removeAll(missiles);
 			aliens.removeAll(aliens);
+			bunkers.removeAll(bunkers);
+			bombs.removeAll(bombs);
 			lblGameOver.setVisible(false);
 			lblGameOverScore.setVisible(false);
 			lblGameTopScore.setVisible(false);
+			
 			setUpShooter();
 			setUpLargeAliens();
 			setUpSmallAliens();
+			setUpBunkers();
+			
 			PLAYER_SCORE = 0;
+			PLAYER_HEALTH = 100;
+			PLAYER_LIVES = 3;
+			PLAYER_LEVEL = 1;
+			PLAYER_TIME_LEFT = 5000;
+			
 			lblGameScore.setText("Score: " + PLAYER_SCORE);
+			lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
+			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
 			lblGameScore.setVisible(true);
+			lblPlayerTime.setVisible(true);
+			lblPlayerLives.setVisible(true);
+			lblPlayerLevel.setVisible(true);
+			
+			NUM_SMALL_ALIENS = 8;
+			NUM_LARGE_ALIENS = 3;
+			NUM_BUNKERS = 7;
+			
 			timer.start();
 			gameFrame.repaint();
 			gameFrame.add(lblGameScore);
+			gameFrame.add(lblPlayerTime);
+			gameFrame.add(lblPlayerLives);
+			gameFrame.add(lblPlayerLevel);
 		}
 		
 		if (key == 27) // ESC
 		{	
-			if (play == 0)
+			if (play == true)
 			{
 				timer.stop();
-				play = 1;
+				play = false;
 				lblGamePaused.setVisible(true);
-				btnResume.setVisible(true);
+			}
+			else
+			{
+				timer.start();
+				play = true;
+				lblGamePaused.setVisible(false);
 			}
 			
 		}
