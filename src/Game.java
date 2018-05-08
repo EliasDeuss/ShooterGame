@@ -6,16 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -47,7 +41,7 @@ public class Game implements ActionListener, KeyListener
 	private int PLAYER_LIVES = 3;
 	private int PLAYER_TIME_LEFT = 5000;
 	private int TOP_SCORE = 0;
-	private int DIF = 0;
+	private int DIF_BOMBS = 250;
 	private int PLAYER_LEVEL = 1;
 	private int BOMB_DROP = 0;
 	
@@ -66,9 +60,12 @@ public class Game implements ActionListener, KeyListener
 	// dimensions of the Image
 	private ImageIcon imgBackground = new ImageIcon(getClass().getResource("space.gif"));
 	private ImageIcon imgShooter = new ImageIcon(getClass().getResource("shooter.png"));
-	private ImageIcon imgBunker = new ImageIcon(getClass().getResource("asteroid.png")); //*
+	private ImageIcon imgBomb = new ImageIcon(getClass().getResource("bomb-1.png"));
+	private ImageIcon imgLife = new ImageIcon(getClass().getResource("life.png")); //*
 
 	private JLabel lblShooter = new JLabel(imgShooter);
+	private JLabel lblLife = new JLabel(imgLife);
+	
 	private int shooterX, shooterY, AlienX, AlienY;
 
 	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
@@ -93,7 +90,7 @@ public class Game implements ActionListener, KeyListener
 	ArrayList<Missile> missiles = new ArrayList<Missile>();
 	ArrayList<Bomb> bombs = new ArrayList<Bomb>();
 	ArrayList<Bunker> bunkers = new ArrayList<Bunker>(); 
-	ArrayList<LivesPacks> helthpacks = new ArrayList<LivesPacks>();
+	ArrayList<LivesPack> livespacks = new ArrayList<LivesPack>();
 
 	public static void main(String[] args) 
 	{
@@ -181,6 +178,7 @@ public class Game implements ActionListener, KeyListener
 		setUpLargeAliens();
 		setUpSmallAliens();
 		setUpBunkers();
+		setUpLivesPacks();
 		
 		//Menu
 		
@@ -431,6 +429,23 @@ public class Game implements ActionListener, KeyListener
 			bunkers.add(new Bunker(x, y));
 		}
 	}
+	
+	public void setUpLivesPacks()
+	{
+		LivesPack tempLivesPacks = new LivesPack(0, 0);
+		int LivesPacksWidth = tempLivesPacks.getWidth();
+		int LivesPacksHeight = tempLivesPacks.getHeight();
+
+		for (int i = 0; i < 1; i++)
+		{
+			// Set the starting positions of each of the bunkers being placed
+			int x = (int) (Math.random() * (FIELD_WIDTH - LivesPacksWidth - 7) + 1);
+			int y = (int) (Math.random() * (FIELD_HEIGHT*3/4 - LivesPacksHeight - 26 - lblShooter.getHeight() - 60));
+
+			// Create a new 'Bunker' object and add it to the 'bunker' ArrayList 
+			livespacks.add(new LivesPack(x, y));
+		}
+	}
 
 	public void actionPerformed(ActionEvent event)
 	{
@@ -468,8 +483,11 @@ public class Game implements ActionListener, KeyListener
 		lblShooter.setLocation(shooterX, shooterY);
 		
 		BOMB_DROP = BOMB_DROP + 1;
-		if (BOMB_DROP == 255)
+		
+		if (BOMB_DROP == DIF_BOMBS)
+		{
 			BOMB_DROP = 0;
+		}
 
 		// Move the remaining aliens across the playing field
 		for (int i = 0; i < aliens.size(); i++)
@@ -527,7 +545,7 @@ public class Game implements ActionListener, KeyListener
 			missileFired = true;
 		}
 		
-		if (BOMB_DROP == 250)
+		if (BOMB_DROP == DIF_BOMBS - 1)
 		{
 			// Set the starting position of the bomb being launched 
 			Random rand = new Random();
@@ -584,6 +602,18 @@ public class Game implements ActionListener, KeyListener
 			pLabel.setSize(bunker.getWidth(), bunker.getHeight());
 			gameFrame.add(pLabel);
 		}
+		
+		//Draw the LivesPacks
+				for (int i = 0; i < bunkers.size(); i++)
+				{
+					LivesPack livepacks = livespacks.get(i);
+					
+					JLabel lLabel = livespacks.getLivesPackImage();
+					
+					lLabel.setLocation(livespacks.getX(), livespacks.getY());
+					lLabel.setSize(livespacks.getWidth(), livespacks.getHeight());
+					gameFrame.add(lifeLabel);
+				}
 
 		// Redraw/Update the playing field
 		gameFrame.repaint();
@@ -739,6 +769,8 @@ public class Game implements ActionListener, KeyListener
 			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
 			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
 			
+			DIF_BOMBS = DIF_BOMBS - 30;
+			
 			setUpShooter();
 			setUpLargeAliens();
 			setUpSmallAliens();
@@ -755,7 +787,6 @@ public class Game implements ActionListener, KeyListener
 			gameFrame.add(lblPlayerLives);
 			
 			gameFrame.repaint();
-
 		}
 	}
 
