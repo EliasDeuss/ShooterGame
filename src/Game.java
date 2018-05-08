@@ -603,17 +603,17 @@ public class Game implements ActionListener, KeyListener
 			gameFrame.add(pLabel);
 		}
 		
-		//Draw the LivesPacks
-				for (int i = 0; i < bunkers.size(); i++)
-				{
-					LivesPack livepacks = livespacks.get(i);
-					
-					JLabel lLabel = livespacks.getLivesPackImage();
-					
-					lLabel.setLocation(livespacks.getX(), livespacks.getY());
-					lLabel.setSize(livespacks.getWidth(), livespacks.getHeight());
-					gameFrame.add(lifeLabel);
-				}
+//		//Draw the LivesPacks
+//				for (int i = 0; i < bunkers.size(); i++)
+//				{
+//					LivesPack livepacks = livespacks.get(i);
+//					
+//					JLabel lLabel = livespacks.getLivesPackImage();
+//					
+//					lLabel.setLocation(livespacks.getX(), livespacks.getY());
+//					lLabel.setSize(livespacks.getWidth(), livespacks.getHeight());
+//					gameFrame.add(lifeLabel);
+//				}
 
 		// Redraw/Update the playing field
 		gameFrame.repaint();
@@ -769,7 +769,7 @@ public class Game implements ActionListener, KeyListener
 			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
 			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
 			
-			DIF_BOMBS = DIF_BOMBS - 30;
+			DIF_BOMBS = DIF_BOMBS - 25;
 			
 			setUpShooter();
 			setUpLargeAliens();
