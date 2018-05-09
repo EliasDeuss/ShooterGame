@@ -40,10 +40,10 @@ public class Game implements ActionListener, KeyListener
 	private int NUM_SMALL_ALIENS = 8;
 	private int NUM_LARGE_ALIENS = 3;
 	private int NUM_BUNKERS = 7;
-	private int PLAYER_SCORE = 0;
+	private int PLAYER_SCORE = 5;
 	private int PLAYER_LIVES = 3;
 	private int PLAYER_TIME_LEFT = 5000;
-	private int TOP_SCORE = 0;
+	private int TOP_SCORE;
 	private int DIF_BOMBS = 250;
 	private int PLAYER_LEVEL = 1;
 	private int BOMB_DROP = 0;
@@ -257,8 +257,8 @@ public class Game implements ActionListener, KeyListener
 		
 		//Set up the top score JLabel
 		lblGameTopScore.setVisible(false);
-		lblGameTopScore.setSize(textWidth, 40);
-		lblGameTopScore.setLocation(FIELD_WIDTH / 2 - textWidth / 2, FIELD_HEIGHT / 2 - 1);
+		lblGameTopScore.setSize(200, 50);
+		lblGameTopScore.setLocation(FIELD_WIDTH / 2 - textWidth / 2, (FIELD_HEIGHT / 2) + 10);
 		lblGameTopScore.setFont(fontGameOver);
 		lblGameTopScore.setForeground(Color.YELLOW);
 		gameFrame.add(lblGameTopScore);
@@ -300,8 +300,10 @@ public class Game implements ActionListener, KeyListener
 				menuItem = new JMenuItem("Reset");
 				menuItem.setActionCommand("reset");
 				menuItem.addActionListener(
-						  new ActionListener() {
-						    public void actionPerformed(ActionEvent e) {
+						  new ActionListener() 
+						  {
+						    public void actionPerformed(ActionEvent e) 
+						    {
 						    	if (e.getActionCommand().equals("reset"))
 								{
 						    		gameFrame.getContentPane().removeAll();
@@ -356,8 +358,10 @@ public class Game implements ActionListener, KeyListener
 				group.add(rbMenuItem1);
 				rbMenuItem1.setActionCommand("normal");
 				rbMenuItem1.addActionListener(
-						  new ActionListener() {
-						    public void actionPerformed(ActionEvent e) {
+						  new ActionListener() 
+						  {
+						    public void actionPerformed(ActionEvent e) 
+						    {
 						    	if (e.getActionCommand().equals("normal"))
 								{
 						    		NUM_SMALL_ALIENS = 8;
@@ -390,8 +394,10 @@ public class Game implements ActionListener, KeyListener
 				group.add(rbMenuItem2);
 				rbMenuItem2.setActionCommand("hard");
 				rbMenuItem2.addActionListener(
-						  new ActionListener() {
-						    public void actionPerformed(ActionEvent e) {
+						  new ActionListener() 
+						  {
+						    public void actionPerformed(ActionEvent e) 
+						    {
 						    	if (e.getActionCommand().equals("hard"))
 								{
 						    		NUM_SMALL_ALIENS = 13;
@@ -424,8 +430,10 @@ public class Game implements ActionListener, KeyListener
 				menuItem = new JMenuItem("Exit");
 				menuItem.setActionCommand("Exit");
 				menuItem.addActionListener(
-						  new ActionListener() {
-						    public void actionPerformed(ActionEvent e) {
+						  new ActionListener() 
+						  {
+						    public void actionPerformed(ActionEvent e)
+						    {
 						    	if (e.getActionCommand().equals("Exit"))
 								{
 						    		gameFrame.dispose();
@@ -443,96 +451,38 @@ public class Game implements ActionListener, KeyListener
 
 	public void setUpHighScore()
 	{
-			File file = new File("C:\\Users\\Public\\Documents\\highscore.txt");
-
-	        try {
-				if (file.createNewFile()) {
-					BufferedWriter bw = null;
-					FileWriter fw = null;
-
-					try {
-						fw = new FileWriter("C:\\Users\\Public\\Documents\\highscore.txt");
-						bw = new BufferedWriter(fw);
-						bw.write(PLAYER_SCORE);
-
-						System.out.println("Done");
-
-					} catch (IOException e) {
-
-						e.printStackTrace();
-
-					} finally {
-
-						try {
-
-							if (bw != null)
-								bw.close();
-
-							if (fw != null)
-								fw.close();
-
-						} catch (IOException ex) {
-
-							ex.printStackTrace();
-
-						}
-
-					}
-
-				    System.out.println("File has been created.");
-				} else {
+		File file = new File("highscore.txt");
+		try 
+		{	
+			BufferedReader input2 = new BufferedReader(new FileReader(file));
+			TOP_SCORE = Integer.parseInt(input2.readLine());
+			input2.close();
+			
+			if (PLAYER_SCORE > TOP_SCORE)
+			{
+				// Create a 'BufferedWriter' object from a 'FileWriter' object
+				BufferedWriter output2 = new BufferedWriter(new FileWriter(file));
+				output2.write("" + PLAYER_SCORE);
+				output2.close(); 
 				
-				    System.out.println("File already exists.");
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				BufferedReader input3 = new BufferedReader(new FileReader(file));
+				TOP_SCORE = Integer.parseInt(input3.readLine());
+				input3.close();
 			}
-		
+		}
+		catch (Exception error)
+		{
+		}	
 	}
 	
 	public void setUpReader()
 	{
-		BufferedReader br = null;
-		FileReader fr = null;
-
-		try {
-
-			//br = new BufferedReader(new FileReader(FILENAME));
-			fr = new FileReader("C:\\Users\\Public\\Documents\\highscore.txt");
-			br = new BufferedReader(fr);
-
-			String sCurrentLine;
-
-			while ((sCurrentLine = br.readLine()) != null) {
-				System.out.println(sCurrentLine);
-			}
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
-		} finally {
-
-			try {
-
-				if (br != null)
-					br.close();
-
-				if (fr != null)
-					fr.close();
-
-			} catch (IOException ex) {
-
-				ex.printStackTrace();
-
-			}
-
-		}
+		
 	}
 	
 	public void actionPerformed(ActionEvent event)
 	{
+		
 		
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
@@ -549,6 +499,7 @@ public class Game implements ActionListener, KeyListener
 		//Live's And health
 		if (PLAYER_LIVES == 0 || PLAYER_TIME_LEFT == 0)
 		{
+			setUpHighScore();
 			timer.stop();
 			gameFrame.getContentPane().removeAll();
 			missiles.removeAll(missiles);
@@ -558,11 +509,12 @@ public class Game implements ActionListener, KeyListener
 			// Display the "Game Over" JLabel
 			gameFrame.add(lblGameOver);
 			gameFrame.add(lblGameOverScore);
+			gameFrame.add(lblGameTopScore);
 			lblGameOverScore.setText("Score: " + PLAYER_SCORE);
+			lblGameTopScore.setText("Top Score " + TOP_SCORE);
 			lblGameOver.setVisible(true);
 			lblGameOverScore.setVisible(true);
 			lblGameTopScore.setVisible(true);
-	
 		}
 		
 		// Change the shooter's position if the player is pressing the left
