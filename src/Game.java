@@ -34,9 +34,7 @@ public class Game implements ActionListener, KeyListener
 	// Local Constants
 	private final int TIMER_SPEED = 10;
 	private final int TIMER_DELAY = 750;
-
 	private final int SHOOTER_SPEED = 2;
-
 	private int NUM_SMALL_ALIENS = 8;
 	private int NUM_LARGE_ALIENS = 3;
 	private int NUM_BUNKERS = 7;
@@ -47,8 +45,7 @@ public class Game implements ActionListener, KeyListener
 	private int DIF_BOMBS = 250;
 	private int PLAYER_LEVEL = 1;
 	private int BOMB_DROP = 0;
-	
-	private boolean play = true;
+	private int shooterX, shooterY, AlienX, AlienY;
 
 	private JFrame gameFrame;
 	private Timer timer;
@@ -58,17 +55,10 @@ public class Game implements ActionListener, KeyListener
 	private ImageIcon imgShooter = new ImageIcon(getClass().getResource("shooter.png"));
 	private ImageIcon imgLife = new ImageIcon(getClass().getResource("life.png")); //*
 
-	private JLabel lblShooter = new JLabel(imgShooter);
-	
-	private int shooterX, shooterY, AlienX, AlienY;
-
+	private boolean play = true;
 	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
 	private boolean controlKeyPressed = false, missileFired = false, bombFired = false;
-
-	private JLabel lblGameOver = new JLabel("Game Over!");
-	private Font fontGameOver = new Font("Helvetica", Font.BOLD, 24);
-	private int textWidth = lblGameOver.getFontMetrics(fontGameOver).stringWidth(lblGameOver.getText());
-
+	private JLabel lblShooter = new JLabel(imgShooter);
 	private JLabel lblGameOverScore = new JLabel("Score: " + PLAYER_SCORE);
 	private JLabel lblGameScore = new JLabel("Score: " + PLAYER_SCORE);
 	private JLabel lblGameTopScore = new JLabel("Top Score: " + PLAYER_SCORE);
@@ -76,6 +66,10 @@ public class Game implements ActionListener, KeyListener
 	private JLabel lblPlayerTime = new JLabel("Time Left: " + PLAYER_TIME_LEFT);
 	private JLabel lblPlayerLives = new JLabel("Lives: " + PLAYER_LIVES);
 	private JLabel lblGamePaused = new JLabel("Pause");
+	
+	private JLabel lblGameOver = new JLabel("Game Over!");
+	private Font fontGameOver = new Font("Helvetica", Font.BOLD, 24);
+	private int textWidth = lblGameOver.getFontMetrics(fontGameOver).stringWidth(lblGameOver.getText());
 
 	//Array Lists
 	ArrayList<Alien> aliens = new ArrayList<Alien>();
@@ -95,7 +89,6 @@ public class Game implements ActionListener, KeyListener
 		setUpFrame();
 		setUpMenuBar();
 		setUpHighScore();
-		
 		setUpShooter();
 		setUpLargeAliens();
 		setUpSmallAliens();
@@ -117,8 +110,7 @@ public class Game implements ActionListener, KeyListener
 		// Set the size of the JLabel that contains the shooter image
 		lblShooter.setSize(imgShooter.getIconWidth(), imgShooter.getIconHeight());
 
-		// Set the shooter's initial position on the playing field; note
-		// that subtracting 30 pixels accounts for the JFrame title bar
+		// Set the shooter's initial position 
 		shooterX = (FIELD_WIDTH / 2) - (lblShooter.getWidth() / 2);
 		shooterY = FIELD_HEIGHT - lblShooter.getHeight() - 48;
 		lblShooter.setLocation(shooterX, shooterY);
@@ -203,6 +195,7 @@ public class Game implements ActionListener, KeyListener
 		}
 	}
 	
+	//Sets up JFrame and all JLabels
 	public void setUpFrame()
 	{
 		gameFrame = new JFrame();
@@ -263,13 +256,14 @@ public class Game implements ActionListener, KeyListener
 		lblGameTopScore.setForeground(Color.YELLOW);
 		gameFrame.add(lblGameTopScore);
 		
-		//Pause Menu
+		//Game Over Score
 		lblGameOverScore.setVisible(false);
 		lblGameOverScore.setSize(textWidth, 50);
 		lblGameOverScore.setLocation(FIELD_WIDTH / 2 - textWidth / 2, FIELD_HEIGHT / 2 - 20);
 		lblGameOverScore.setFont(fontGameOver);
 		lblGameOverScore.setForeground(Color.WHITE);
 		
+		//Pause Menu
 		lblGamePaused.setVisible(false);
 		lblGamePaused.setSize(textWidth, 40);
 		lblGamePaused.setLocation(410,250);
@@ -282,80 +276,80 @@ public class Game implements ActionListener, KeyListener
 	{
 		//Menu
 
-				JMenuBar menuBar;
-				JMenu menu;
-				JMenuItem menuItem;
-				JRadioButtonMenuItem rbMenuItem1, rbMenuItem2;
+		JMenuBar menuBar;
+		JMenu menu;
+		JMenuItem menuItem;
+		JRadioButtonMenuItem rbMenuItem1, rbMenuItem2;
 
-				//Create the menu bar.
-				menuBar = new JMenuBar();
+		//Create the menu bar.
+		menuBar = new JMenuBar();
 
-				//Build the first menu.
-				menu = new JMenu("File");
-				menu.setMnemonic(KeyEvent.VK_A);
-				menu.getAccessibleContext().setAccessibleDescription("File");
-				menuBar.add(menu);
+		//Build the first menu.
+		menu = new JMenu("File");
+		menu.setMnemonic(KeyEvent.VK_A);
+		menu.getAccessibleContext().setAccessibleDescription("File");
+		menuBar.add(menu);
+				
+		//a group of JMenuItems
+		menuItem = new JMenuItem("Reset");
+		menuItem.setActionCommand("reset");
+		menuItem.addActionListener(
+		  new ActionListener() 
+				{
+			    public void actionPerformed(ActionEvent e) 
+			    {
+			    	if (e.getActionCommand().equals("reset"))
+					{
+			    		gameFrame.getContentPane().removeAll();
+						missiles.removeAll(missiles);
+						aliens.removeAll(aliens);
+						bunkers.removeAll(bunkers);
+						bombs.removeAll(bombs);
+						lblGameOver.setVisible(false);
+						lblGameOverScore.setVisible(false);
+						lblGameTopScore.setVisible(false);
+						
+						setUpShooter();
+						setUpLargeAliens();
+						setUpSmallAliens();
+						setUpBunkers();
+									
+						PLAYER_SCORE = 0;
+						PLAYER_LIVES = 3;
+						PLAYER_LEVEL = 1;
+						PLAYER_TIME_LEFT = 5000;
+							
+						lblGameScore.setText("Score: " + PLAYER_SCORE);
+						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
+						lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
+						lblGameScore.setVisible(true);
+						lblPlayerTime.setVisible(true);
+						lblPlayerLives.setVisible(true);
+						lblPlayerLevel.setVisible(true);
+							
+						NUM_SMALL_ALIENS = 8;
+						NUM_LARGE_ALIENS = 3;
+						NUM_BUNKERS = 7;
+								
+						timer.start();
+						gameFrame.repaint();
+						gameFrame.add(lblGameScore);
+						gameFrame.add(lblPlayerTime);
+						gameFrame.add(lblPlayerLives);
+						gameFrame.add(lblPlayerLevel);
+					}
+				}
+		  }
+		);
+		menu.add(menuItem);
 
-				//a group of JMenuItems
-				menuItem = new JMenuItem("Reset");
-				menuItem.setActionCommand("reset");
-				menuItem.addActionListener(
-						  new ActionListener() 
-						  {
-						    public void actionPerformed(ActionEvent e) 
-						    {
-						    	if (e.getActionCommand().equals("reset"))
-								{
-						    		gameFrame.getContentPane().removeAll();
-									missiles.removeAll(missiles);
-									aliens.removeAll(aliens);
-									bunkers.removeAll(bunkers);
-									bombs.removeAll(bombs);
-									lblGameOver.setVisible(false);
-									lblGameOverScore.setVisible(false);
-									lblGameTopScore.setVisible(false);
-									
-									setUpShooter();
-									setUpLargeAliens();
-									setUpSmallAliens();
-									setUpBunkers();
-									
-									PLAYER_SCORE = 0;
-									PLAYER_LIVES = 3;
-									PLAYER_LEVEL = 1;
-									PLAYER_TIME_LEFT = 5000;
-									
-									lblGameScore.setText("Score: " + PLAYER_SCORE);
-									lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
-									lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
-									lblGameScore.setVisible(true);
-									lblPlayerTime.setVisible(true);
-									lblPlayerLives.setVisible(true);
-									lblPlayerLevel.setVisible(true);
-									
-									NUM_SMALL_ALIENS = 8;
-									NUM_LARGE_ALIENS = 3;
-									NUM_BUNKERS = 7;
-									
-									timer.start();
-									gameFrame.repaint();
-									gameFrame.add(lblGameScore);
-									gameFrame.add(lblPlayerTime);
-									gameFrame.add(lblPlayerLives);
-									gameFrame.add(lblPlayerLevel);
-								}
-						    }
-						  }
-						);
-				menu.add(menuItem);
-
-				//Difficulty Selector
-				menu.addSeparator();
-				ButtonGroup group = new ButtonGroup();
-				rbMenuItem1 = new JRadioButtonMenuItem("Normal");
-				rbMenuItem1.setSelected(true);
-				rbMenuItem1.setMnemonic(KeyEvent.VK_R);
-				group.add(rbMenuItem1);
+		//Difficulty Selector
+		menu.addSeparator();
+		ButtonGroup group = new ButtonGroup();
+		rbMenuItem1 = new JRadioButtonMenuItem("Normal");
+		rbMenuItem1.setSelected(true);
+		rbMenuItem1.setMnemonic(KeyEvent.VK_R);
+		group.add(rbMenuItem1);
 				rbMenuItem1.setActionCommand("normal");
 				rbMenuItem1.addActionListener(
 						  new ActionListener() 
@@ -387,13 +381,13 @@ public class Game implements ActionListener, KeyListener
 						    }
 						  }
 						);
-				menu.add(rbMenuItem1);
+		menu.add(rbMenuItem1);
 
-				rbMenuItem2 = new JRadioButtonMenuItem("Hard");
-				rbMenuItem2.setMnemonic(KeyEvent.VK_O);
-				group.add(rbMenuItem2);
-				rbMenuItem2.setActionCommand("hard");
-				rbMenuItem2.addActionListener(
+		rbMenuItem2 = new JRadioButtonMenuItem("Hard");
+		rbMenuItem2.setMnemonic(KeyEvent.VK_O);
+		group.add(rbMenuItem2);
+		rbMenuItem2.setActionCommand("hard");
+		rbMenuItem2.addActionListener(
 						  new ActionListener() 
 						  {
 						    public void actionPerformed(ActionEvent e) 
@@ -423,13 +417,13 @@ public class Game implements ActionListener, KeyListener
 						    }
 						  }
 						);
-				menu.add(rbMenuItem2);
-				
-				//Exit Menu
-				menu.addSeparator();
-				menuItem = new JMenuItem("Exit");
-				menuItem.setActionCommand("Exit");
-				menuItem.addActionListener(
+		menu.add(rbMenuItem2);
+		
+		//Exit Menu
+		menu.addSeparator();
+		menuItem = new JMenuItem("Exit");
+		menuItem.setActionCommand("Exit");
+		menuItem.addActionListener(
 						  new ActionListener() 
 						  {
 						    public void actionPerformed(ActionEvent e)
@@ -442,16 +436,17 @@ public class Game implements ActionListener, KeyListener
 						    }
 						  }
 						);
-				menu.add(menuItem);
-				
-				gameFrame.setJMenuBar(menuBar);
-				
-				rbMenuItem2.setEnabled(false);
+		menu.add(menuItem);
+			
+		gameFrame.setJMenuBar(menuBar);
+		
+		rbMenuItem2.setEnabled(false);
 	}
 
 	public void setUpHighScore()
 	{
 		File file = new File("highscore.txt");
+		
 		try 
 		{	
 			BufferedReader input2 = new BufferedReader(new FileReader(file));
@@ -475,15 +470,9 @@ public class Game implements ActionListener, KeyListener
 		}	
 	}
 	
-	public void setUpReader()
-	{
-		
-	}
-	
 	public void actionPerformed(ActionEvent event)
 	{
-		
-		
+		//Time Count down
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
 		
@@ -496,7 +485,7 @@ public class Game implements ActionListener, KeyListener
 			timer.stop();
 		}
 		
-		//Live's And health
+		//Game Over Actions
 		if (PLAYER_LIVES == 0 || PLAYER_TIME_LEFT == 0)
 		{
 			setUpHighScore();
@@ -504,8 +493,6 @@ public class Game implements ActionListener, KeyListener
 			gameFrame.getContentPane().removeAll();
 			missiles.removeAll(missiles);
 			
-			setUpReader();
-
 			// Display the "Game Over" JLabel
 			gameFrame.add(lblGameOver);
 			gameFrame.add(lblGameOverScore);
@@ -567,10 +554,7 @@ public class Game implements ActionListener, KeyListener
 			}
 		}
 
-		// If the player has pressed the space bar, launch a missile; the variable
-		// 'missileFired' prevents the player from holding down the space bar to
-		// fire missiles continuously (by forcing the player to release the space
-		// bar between firings)
+		//Prevents user from pressing and holding space bar
 		if (pressedSpace && !missileFired)
 		{
 			// Determine the width and height of the missile being launched
@@ -588,6 +572,7 @@ public class Game implements ActionListener, KeyListener
 			missileFired = true;
 		}
 		
+		//Randomly drops bombs & increases difficulty 
 		if (BOMB_DROP == DIF_BOMBS - 1)
 		{
 			// Set the starting position of the bomb being launched 
