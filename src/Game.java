@@ -6,8 +6,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -87,6 +94,8 @@ public class Game implements ActionListener, KeyListener
 	{
 		setUpFrame();
 		setUpMenuBar();
+		setUpHighScore();
+		
 		setUpShooter();
 		setUpLargeAliens();
 		setUpSmallAliens();
@@ -432,6 +441,96 @@ public class Game implements ActionListener, KeyListener
 				rbMenuItem2.setEnabled(false);
 	}
 
+	public void setUpHighScore()
+	{
+			File file = new File("C:\\Users\\Public\\Documents\\highscore.txt");
+
+	        try {
+				if (file.createNewFile()) {
+					BufferedWriter bw = null;
+					FileWriter fw = null;
+
+					try {
+						fw = new FileWriter("C:\\Users\\Public\\Documents\\highscore.txt");
+						bw = new BufferedWriter(fw);
+						bw.write(PLAYER_SCORE);
+
+						System.out.println("Done");
+
+					} catch (IOException e) {
+
+						e.printStackTrace();
+
+					} finally {
+
+						try {
+
+							if (bw != null)
+								bw.close();
+
+							if (fw != null)
+								fw.close();
+
+						} catch (IOException ex) {
+
+							ex.printStackTrace();
+
+						}
+
+					}
+
+				    System.out.println("File has been created.");
+				} else {
+				
+				    System.out.println("File already exists.");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+	}
+	
+	public void setUpReader()
+	{
+		BufferedReader br = null;
+		FileReader fr = null;
+
+		try {
+
+			//br = new BufferedReader(new FileReader(FILENAME));
+			fr = new FileReader("C:\\Users\\Public\\Documents\\highscore.txt");
+			br = new BufferedReader(fr);
+
+			String sCurrentLine;
+
+			while ((sCurrentLine = br.readLine()) != null) {
+				System.out.println(sCurrentLine);
+			}
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		} finally {
+
+			try {
+
+				if (br != null)
+					br.close();
+
+				if (fr != null)
+					fr.close();
+
+			} catch (IOException ex) {
+
+				ex.printStackTrace();
+
+			}
+
+		}
+	}
+	
 	public void actionPerformed(ActionEvent event)
 	{
 		
@@ -453,6 +552,8 @@ public class Game implements ActionListener, KeyListener
 			timer.stop();
 			gameFrame.getContentPane().removeAll();
 			missiles.removeAll(missiles);
+			
+			setUpReader();
 
 			// Display the "Game Over" JLabel
 			gameFrame.add(lblGameOver);
