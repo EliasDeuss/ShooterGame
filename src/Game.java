@@ -1,4 +1,11 @@
 import java.awt.Color;
+import java.sql.Connection;
+import java.sql.DriverManager; 
+import java.sql.ResultSet; 
+import java.sql.SQLException; 
+import java.sql.Statement; 
+import java.util.logging.Level; 
+import java.util.logging.Logger;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -45,6 +52,7 @@ public class Game implements ActionListener, KeyListener
 	private int DIF_BOMBS = 250;
 	private int PLAYER_LEVEL = 1;
 	private int BOMB_DROP = 0;
+	private int LifeX, LifeY;
 	private int shooterX, shooterY, AlienX, AlienY;
 
 	private JFrame gameFrame;
@@ -54,6 +62,7 @@ public class Game implements ActionListener, KeyListener
 	private ImageIcon imgBackground = new ImageIcon(getClass().getResource("space.gif"));
 	private ImageIcon imgShooter = new ImageIcon(getClass().getResource("shooter.png"));
 	private ImageIcon imgLife = new ImageIcon(getClass().getResource("life.png")); //*
+	private JLabel LifeLabel = new JLabel(imgLife);
 
 	private boolean play = true;
 	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
@@ -76,7 +85,7 @@ public class Game implements ActionListener, KeyListener
 	ArrayList<Missile> missiles = new ArrayList<Missile>();
 	ArrayList<Bomb> bombs = new ArrayList<Bomb>();
 	ArrayList<Bunker> bunkers = new ArrayList<Bunker>(); 
-	ArrayList<LivesPack> livespacks = new ArrayList<LivesPack>();
+	ArrayList<Life> lifes = new ArrayList<Life>();
 
 	public static void main(String[] args) 
 	{
@@ -93,7 +102,8 @@ public class Game implements ActionListener, KeyListener
 		setUpLargeAliens();
 		setUpSmallAliens();
 		setUpBunkers();
-		setUpLivesPacks();
+		
+		//setUpLife();
 		
 		gameFrame.addKeyListener(this);
 		gameFrame.setVisible(true);
@@ -178,20 +188,26 @@ public class Game implements ActionListener, KeyListener
 		}
 	}
 	
-	public void setUpLivesPacks()
+	public void setUpLife()
 	{
-		LivesPack tempLivesPacks = new LivesPack(0, 0);
+		Life tempLivesPacks = new Life(0, 0);
 		int LivesPacksWidth = tempLivesPacks.getWidth();
 		int LivesPacksHeight = tempLivesPacks.getHeight();
 
 		for (int i = 0; i < 1; i++)
 		{
 			// Set the starting positions of each of the bunkers being placed
-			int x = (int) (Math.random() * (FIELD_WIDTH - LivesPacksWidth - 7) + 1);
-			int y = (int) (Math.random() * (FIELD_HEIGHT*3/4 - LivesPacksHeight - 26 - lblShooter.getHeight() - 60));
-
+		int x = (int) (Math.random() * (FIELD_WIDTH - LivesPacksWidth - 7) + 1);
+		int y = (int) (Math.random() * (FIELD_HEIGHT*3/4 - LivesPacksHeight - 26 - lblShooter.getHeight() - 60));
+		
+		LifeX = x;
+		LifeY = y;
+		
 			// Create a new 'Bunker' object and add it to the 'bunker' ArrayList 
-			livespacks.add(new LivesPack(x, y));
+			LifeLabel.setVisible(true);
+			LifeLabel.setSize(textWidth, 40);
+			LifeLabel.setLocation(x,y);
+			gameFrame.add(LifeLabel);
 		}
 	}
 	
@@ -472,6 +488,25 @@ public class Game implements ActionListener, KeyListener
 	
 	public void actionPerformed(ActionEvent event)
 	{
+		if (PLAYER_LEVEL > 5)
+			PLAYER_LIVES = PLAYER_LIVES + 1; 
+		
+		if (PLAYER_LEVEL > 10)
+			PLAYER_LIVES = PLAYER_LIVES + 1;
+		
+		if (PLAYER_LEVEL > 15)
+			PLAYER_LIVES = PLAYER_LIVES + 1;
+		
+//		if (PLAYER_LIVES < 1)
+//		{
+//			setUpLife();
+//		}
+//		
+//		if (PLAYER_LEVEL == 6)
+//		{
+//			setUpLife();
+//		}
+		
 		//Time Count down
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
@@ -630,18 +665,6 @@ public class Game implements ActionListener, KeyListener
 			pLabel.setSize(bunker.getWidth(), bunker.getHeight());
 			gameFrame.add(pLabel);
 		}
-		
-//		//Draw the LivesPacks
-//				for (int i = 0; i < bunkers.size(); i++)
-//				{
-//					LivesPack livepacks = livespacks.get(i);
-//					
-//					JLabel lLabel = livespacks.getLivesPackImage();
-//					
-//					lLabel.setLocation(livespacks.getX(), livespacks.getY());
-//					lLabel.setSize(livespacks.getWidth(), livespacks.getHeight());
-//					gameFrame.add(lifeLabel);
-//				}
 
 		// Redraw/Update the playing field
 		gameFrame.repaint();
@@ -676,6 +699,8 @@ public class Game implements ActionListener, KeyListener
 																aliens.get(i).getWidth(), aliens.get(i).getHeight());
 					Rectangle rMissile = new Rectangle(missiles.get(j).getX(), missiles.get(j).getY(),
 																  missiles.get(j).getWidth(), missiles.get(j).getHeight());
+					Rectangle rLife = new Rectangle(LifeX, LifeY,
+							  bombs.get(j).getWidth(), bombs.get(j).getHeight());
 
 					// If an alien and a missile intersect each other, remove both
 					// of them from the playing field and the ArrayLists
@@ -689,6 +714,15 @@ public class Game implements ActionListener, KeyListener
 						PLAYER_SCORE = PLAYER_SCORE + 5;
 						
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
+					}
+					
+					if (rLife.intersects(rMissile))
+					{
+						LifeLabel.setVisible(false);
+						
+						PLAYER_LIVES = PLAYER_LIVES + 1;
+						
+						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
 					}
 				}
 				catch (Exception error)
