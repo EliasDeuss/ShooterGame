@@ -21,4 +21,8 @@ public interface Alien
 
 	public int getX();
 	public int getY();
+	
+	public void changeSpeed(int newSpeed);
+	
+	public int getSpeed();
 }

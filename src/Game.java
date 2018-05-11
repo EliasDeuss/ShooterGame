@@ -1,11 +1,4 @@
 import java.awt.Color;
-import java.sql.Connection;
-import java.sql.DriverManager; 
-import java.sql.ResultSet; 
-import java.sql.SQLException; 
-import java.sql.Statement; 
-import java.util.logging.Level; 
-import java.util.logging.Logger;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -488,14 +481,6 @@ public class Game implements ActionListener, KeyListener
 	
 	public void actionPerformed(ActionEvent event)
 	{
-		if (PLAYER_LEVEL > 5)
-			PLAYER_LIVES = PLAYER_LIVES + 1; 
-		
-		if (PLAYER_LEVEL > 10)
-			PLAYER_LIVES = PLAYER_LIVES + 1;
-		
-		if (PLAYER_LEVEL > 15)
-			PLAYER_LIVES = PLAYER_LIVES + 1;
 		
 //		if (PLAYER_LIVES < 1)
 //		{
@@ -547,6 +532,7 @@ public class Game implements ActionListener, KeyListener
 			shooterX += SHOOTER_SPEED;
 		lblShooter.setLocation(shooterX, shooterY);
 		
+		//Dropping Bombs
 		BOMB_DROP = BOMB_DROP + 1;
 		
 		if (BOMB_DROP == DIF_BOMBS)
@@ -699,8 +685,8 @@ public class Game implements ActionListener, KeyListener
 																aliens.get(i).getWidth(), aliens.get(i).getHeight());
 					Rectangle rMissile = new Rectangle(missiles.get(j).getX(), missiles.get(j).getY(),
 																  missiles.get(j).getWidth(), missiles.get(j).getHeight());
-					Rectangle rLife = new Rectangle(LifeX, LifeY,
-							  bombs.get(j).getWidth(), bombs.get(j).getHeight());
+//					Rectangle rLife = new Rectangle(LifeX, LifeY,
+//							  bombs.get(j).getWidth(), bombs.get(j).getHeight());
 
 					// If an alien and a missile intersect each other, remove both
 					// of them from the playing field and the ArrayLists
@@ -716,14 +702,14 @@ public class Game implements ActionListener, KeyListener
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
 					}
 					
-					if (rLife.intersects(rMissile))
-					{
-						LifeLabel.setVisible(false);
-						
-						PLAYER_LIVES = PLAYER_LIVES + 1;
-						
-						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
-					}
+//					if (rLife.intersects(rMissile))
+//					{
+//						LifeLabel.setVisible(false);
+//						
+//						PLAYER_LIVES = PLAYER_LIVES + 1;
+//						
+//						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
+//					}
 				}
 				catch (Exception error)
 				{
@@ -827,17 +813,35 @@ public class Game implements ActionListener, KeyListener
 			lblGameScore.setText("Score: " + PLAYER_SCORE);
 			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
 			
-			PLAYER_TIME_LEFT = PLAYER_TIME_LEFT + 1500;
+			PLAYER_TIME_LEFT = PLAYER_TIME_LEFT + 1000;
 			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
 			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
 			
-			DIF_BOMBS = DIF_BOMBS - 25;
+			if (DIF_BOMBS >= 50)
+			{
+				DIF_BOMBS = DIF_BOMBS - 25;
+			}
+			
+			if (PLAYER_LEVEL == 5)
+				PLAYER_LIVES = PLAYER_LIVES + 1; 
+			
+			if (PLAYER_LEVEL == 10)
+				PLAYER_LIVES = PLAYER_LIVES + 1;
+			
+			if (PLAYER_LEVEL == 15)
+				PLAYER_LIVES = PLAYER_LIVES + 1;
 			
 			setUpShooter();
 			setUpLargeAliens();
 			setUpSmallAliens();
 			setUpBunkers();
 			
+			for (int i = 0; i < aliens.size(); i++)
+				{
+					Alien alien = aliens.get(i);
+					alien.changeSpeed(alien.getSpeed() + 1);
+				}
+					
 			lblGameScore.setVisible(true);
 			lblPlayerLevel.setVisible(true);
 			lblPlayerTime.setVisible(true);

@@ -4,7 +4,7 @@ import javax.swing.JLabel;
 public class SmallAlien implements Alien
 {
 	// Constant
-	private final int ALIEN_SPEED = 1;
+	private int ALIEN_SPEED = 1;
 
 	private int alienWidth;
 	private int alienHeight;
@@ -66,5 +66,15 @@ public class SmallAlien implements Alien
 	public int getY()
 	{
 		return alienYPos;
+	}
+	
+	public void changeSpeed(int newSpeed)
+	{
+		ALIEN_SPEED = newSpeed;
+	}
+	
+	public int getSpeed()
+	{
+		return ALIEN_SPEED;
 	}
 }
