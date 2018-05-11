@@ -72,6 +72,8 @@ public class Game implements ActionListener, KeyListener
 	private JLabel lblGameOver = new JLabel("Game Over!");
 	private Font fontGameOver = new Font("Helvetica", Font.BOLD, 24);
 	private int textWidth = lblGameOver.getFontMetrics(fontGameOver).stringWidth(lblGameOver.getText());
+	
+	private JRadioButtonMenuItem rbMenuItem1, rbMenuItem2;
 
 	//Array Lists
 	ArrayList<Alien> aliens = new ArrayList<Alien>();
@@ -103,7 +105,7 @@ public class Game implements ActionListener, KeyListener
 
 		//Set up / start timer
 		timer = new Timer(TIMER_SPEED, this);
-		timer.setInitialDelay(TIMER_DELAY);
+		//timer.setInitialDelay(TIMER_DELAY);
 		timer.start();
 	}
 
@@ -288,7 +290,6 @@ public class Game implements ActionListener, KeyListener
 		JMenuBar menuBar;
 		JMenu menu;
 		JMenuItem menuItem;
-		JRadioButtonMenuItem rbMenuItem1, rbMenuItem2;
 
 		//Create the menu bar.
 		menuBar = new JMenuBar();
@@ -322,12 +323,14 @@ public class Game implements ActionListener, KeyListener
 						setUpLargeAliens();
 						setUpSmallAliens();
 						setUpBunkers();
-									
+						
+						rbMenuItem1.setSelected(true);
+						
 						PLAYER_SCORE = 0;
 						PLAYER_LIVES = 3;
 						PLAYER_LEVEL = 1;
 						PLAYER_TIME_LEFT = 5000;
-							
+						
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
 						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
 						lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
@@ -335,11 +338,11 @@ public class Game implements ActionListener, KeyListener
 						lblPlayerTime.setVisible(true);
 						lblPlayerLives.setVisible(true);
 						lblPlayerLevel.setVisible(true);
-							
+						
 						NUM_SMALL_ALIENS = 8;
 						NUM_LARGE_ALIENS = 3;
 						NUM_BUNKERS = 7;
-								
+						
 						timer.start();
 						gameFrame.repaint();
 						gameFrame.add(lblGameScore);
@@ -373,19 +376,36 @@ public class Game implements ActionListener, KeyListener
 						    		gameFrame.getContentPane().removeAll();
 									missiles.removeAll(missiles);
 									aliens.removeAll(aliens);
+									bombs.removeAll(bombs);
+									bunkers.removeAll(bunkers);
 									lblGameOver.setVisible(false);
 									lblGameOverScore.setVisible(false);
 									lblGameTopScore.setVisible(false);
+									
 									setUpShooter();
 									setUpLargeAliens();
 									setUpSmallAliens();
+									setUpBunkers();
+									
 									PLAYER_SCORE = 0;
+									PLAYER_TIME_LEFT = 5000;
+									PLAYER_LEVEL = 1;
+									DIF_BOMBS = 250;
+									
 									lblGameScore.setText("Score: " + PLAYER_SCORE);
+									lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
+									lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
 									lblGameScore.setVisible(true);
+									lblPlayerTime.setVisible(true);
+									lblPlayerLives.setVisible(true);
+									lblPlayerLevel.setVisible(true);
 									
 									timer.start();
 									gameFrame.repaint();
 									gameFrame.add(lblGameScore);
+									gameFrame.add(lblPlayerLives);
+									gameFrame.add(lblPlayerTime);
+									gameFrame.add(lblPlayerLevel);
 								}
 						    }
 						  }
@@ -405,23 +425,40 @@ public class Game implements ActionListener, KeyListener
 								{
 						    		NUM_SMALL_ALIENS = 13;
 									NUM_LARGE_ALIENS = 6;
-						    		
+									
 						    		gameFrame.getContentPane().removeAll();
 									missiles.removeAll(missiles);
 									aliens.removeAll(aliens);
+									bombs.removeAll(bombs);
+									bunkers.removeAll(bunkers);
 									lblGameOver.setVisible(false);
 									lblGameOverScore.setVisible(false);
 									lblGameTopScore.setVisible(false);
+									
 									setUpShooter();
 									setUpLargeAliens();
 									setUpSmallAliens();
+									setUpBunkers();
+									
 									PLAYER_SCORE = 0;
+									PLAYER_TIME_LEFT = 5000;
+									PLAYER_LEVEL = 1;
+									DIF_BOMBS = 50;
+									
 									lblGameScore.setText("Score: " + PLAYER_SCORE);
+									lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
+									lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
 									lblGameScore.setVisible(true);
+									lblPlayerTime.setVisible(true);
+									lblPlayerLives.setVisible(true);
+									lblPlayerLevel.setVisible(true);
 									
 									timer.start();
 									gameFrame.repaint();
 									gameFrame.add(lblGameScore);
+									gameFrame.add(lblPlayerLives);
+									gameFrame.add(lblPlayerTime);
+									gameFrame.add(lblPlayerLevel);
 								}
 						    }
 						  }
@@ -449,7 +486,7 @@ public class Game implements ActionListener, KeyListener
 			
 		gameFrame.setJMenuBar(menuBar);
 		
-		rbMenuItem2.setEnabled(false);
+		rbMenuItem2.setEnabled(true);
 	}
 
 	public void setUpHighScore()
@@ -836,6 +873,7 @@ public class Game implements ActionListener, KeyListener
 			setUpSmallAliens();
 			setUpBunkers();
 			
+			
 			for (int i = 0; i < aliens.size(); i++)
 				{
 					Alien alien = aliens.get(i);
@@ -885,6 +923,8 @@ public class Game implements ActionListener, KeyListener
 			setUpLargeAliens();
 			setUpSmallAliens();
 			setUpBunkers();
+			
+			rbMenuItem1.setSelected(true);
 			
 			PLAYER_SCORE = 0;
 			PLAYER_LIVES = 3;
