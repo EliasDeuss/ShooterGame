@@ -1,6 +1,12 @@
 SpaceShooter
 =============
 - This is a simple game made in class
+--------
+
+Known issues
+- High Score (The high score does not show up)
+
+--------
 
 > Screenshot 5/8/18
 
