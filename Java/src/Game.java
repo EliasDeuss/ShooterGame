@@ -33,12 +33,11 @@ public class Game implements ActionListener, KeyListener
 
 	// Local Constants
 	private final int TIMER_SPEED = 10;
-	private final int TIMER_DELAY = 750;
 	private final int SHOOTER_SPEED = 2;
 	private int NUM_SMALL_ALIENS = 8;
 	private int NUM_LARGE_ALIENS = 3;
 	private int NUM_BUNKERS = 7;
-	private int PLAYER_SCORE = 5;
+	private int PLAYER_SCORE = 0;
 	private int PLAYER_LIVES = 3;
 	private int PLAYER_TIME_LEFT = 5000;
 	private int TOP_SCORE;
