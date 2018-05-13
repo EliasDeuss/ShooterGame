@@ -11,7 +11,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,7 +33,9 @@ public class Game implements ActionListener, KeyListener
 	// Global Constants
 	public static final int FIELD_WIDTH = 900;
 	public static final int FIELD_HEIGHT = 600;
-
+	
+	private final File file = new File("file");
+	
 	// Local Constants
 	private final int TIMER_SPEED = 10;
 	private final int SHOOTER_SPEED = 2;
@@ -38,7 +43,7 @@ public class Game implements ActionListener, KeyListener
 	private int NUM_LARGE_ALIENS = 3;
 	private int NUM_BUNKERS = 7;
 	private int PLAYER_SCORE = 0;
-	private int PLAYER_LIVES = 3;
+	private int PLAYER_LIVES = 0;
 	private int PLAYER_TIME_LEFT = 5000;
 	private int TOP_SCORE;
 	private int DIF_BOMBS = 250;
@@ -46,7 +51,9 @@ public class Game implements ActionListener, KeyListener
 	private int BOMB_DROP = 0;
 	private int LifeX, LifeY;
 	private int shooterX, shooterY, AlienX, AlienY;
-
+	
+	private String ALLTIMESCORE = "";
+	
 	private JFrame gameFrame;
 	private Timer timer;
 
@@ -66,6 +73,7 @@ public class Game implements ActionListener, KeyListener
 	private JLabel lblPlayerLevel = new JLabel("Level: " + PLAYER_LEVEL);
 	private JLabel lblPlayerTime = new JLabel("Time Left: " + PLAYER_TIME_LEFT);
 	private JLabel lblPlayerLives = new JLabel("Lives: " + PLAYER_LIVES);
+	private JLabel lblAllTimeTopScore = new JLabel("World Top Score: " + ALLTIMESCORE);
 	private JLabel lblGamePaused = new JLabel("Pause");
 	
 	private JLabel lblGameOver = new JLabel("Game Over!");
@@ -96,6 +104,7 @@ public class Game implements ActionListener, KeyListener
 		setUpLargeAliens();
 		setUpSmallAliens();
 		setUpBunkers();
+		onlineStats();
 		
 		//setUpLife();
 		
@@ -107,6 +116,124 @@ public class Game implements ActionListener, KeyListener
 		//timer.setInitialDelay(TIMER_DELAY);
 		timer.start();
 	}
+	
+	public void onlineStats()
+	{	 
+		String PLAYERTOPS = null;
+		String WORLDTOPS = null;
+		int PLAYERTOP;
+		int WORLDTOP;
+		String numbers;
+		String str;
+		
+		URL url;
+		try {
+		 url = new URL("url");
+		 
+		 BufferedReader input5 = new BufferedReader(new FileReader(file));
+	     str = input5.readLine();
+	       
+	     //extracting string
+	     PLAYERTOPS=str.replaceAll("[^0-9]", "");
+	     input5.close(); 
+		 
+		 URLConnection con = url.openConnection();
+	     BufferedReader in = new BufferedReader(new InputStreamReader(
+	                                    con.getInputStream()));
+         String inputLine;
+	     while ((inputLine = in.readLine()) != null) 
+
+	    WORLDTOPS=inputLine.replaceAll("[^0-9]", "");
+	     
+	    PLAYERTOP = Integer.parseInt(PLAYERTOPS);
+	    WORLDTOP = Integer.parseInt(WORLDTOPS);
+	    	
+	     if (PLAYERTOP >= WORLDTOP)
+	     {
+	    	 lblAllTimeTopScore.setText("World Top Score: " + System.getProperty("user.name")+ ": " + TOP_SCORE);
+	    	 
+	    	try {
+	    		con.setDoOutput(true); 
+	    		OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream()); 
+	    		out.write(System.getProperty("user.name")+ ": " + TOP_SCORE); 
+	    		out.close();
+	    		System.out.println("test");
+	    	}
+	    	catch (Exception error)
+	    	{
+	    	}
+	    	in.close();
+	    	
+	     } else
+	     {
+	    	 lblAllTimeTopScore.setText("World Top Score: " + inputLine);
+	    	 in.close();
+	     }
+	    
+	     
+		
+		} catch (Exception error)
+		{
+		}	
+	    
+
+	}
+		 
+	
+	
+public void setUpHighScore()
+{
+	
+	try 
+	{	
+		if (file.exists()) {
+		    
+		} else {
+			BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+			output4.write("0");
+			output4.close(); 
+		}
+		
+		BufferedReader input2 = new BufferedReader(new FileReader(file));
+		TOP_SCORE = Integer.parseInt(input2.readLine());
+		input2.close();
+		
+		if (PLAYER_SCORE > TOP_SCORE)
+		{
+			// Create a 'BufferedWriter' object from a 'FileWriter' object
+			BufferedWriter output2 = new BufferedWriter(new FileWriter(file));
+			output2.write("" + PLAYER_SCORE);
+			output2.close(); 
+			
+			BufferedReader input3 = new BufferedReader(new FileReader(file));
+			TOP_SCORE = Integer.parseInt(input3.readLine());
+			input3.close();
+		}
+	}
+	catch (Exception error)
+	{
+	}	
+}
+
+public void resetHighScore()
+{
+	
+	try 
+	{	
+		if (file.exists()) {
+			BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+			output4.write("0");
+			output4.close(); 
+		} else {
+			BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+			output4.write("0");
+			output4.close(); 
+		}
+	}
+	catch (Exception error)
+	{
+	}	
+}
 
 	// Set the size and starting position of the player's shooter
 	public void setUpShooter()
@@ -214,7 +341,7 @@ public class Game implements ActionListener, KeyListener
 		gameFrame.setContentPane(new JLabel(imgBackground));
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gameFrame.setSize(FIELD_WIDTH, FIELD_HEIGHT);
-		gameFrame.setTitle("Simple Shooter Game");
+		gameFrame.setTitle("SpaceShooter v0.1.6");
 		gameFrame.setLocationRelativeTo(null);
 		gameFrame.setResizable(false);
 		gameFrame.setFocusable(true);
@@ -222,7 +349,7 @@ public class Game implements ActionListener, KeyListener
 		// Set up the "Game Over" JLabel
 		lblGameOver.setVisible(false);
 		lblGameOver.setSize(textWidth, 50);
-		lblGameOver.setLocation(FIELD_WIDTH / 2 - textWidth / 2, FIELD_HEIGHT / 2 - 50);
+		lblGameOver.setLocation(375,235);
 		lblGameOver.setFont(fontGameOver);
 		lblGameOver.setForeground(Color.YELLOW);
 		
@@ -261,15 +388,24 @@ public class Game implements ActionListener, KeyListener
 		//Set up the top score JLabel
 		lblGameTopScore.setVisible(false);
 		lblGameTopScore.setSize(200, 50);
-		lblGameTopScore.setLocation(FIELD_WIDTH / 2 - textWidth / 2, (FIELD_HEIGHT / 2) + 10);
+		lblGameTopScore.setLocation(365,285);
 		lblGameTopScore.setFont(fontGameOver);
-		lblGameTopScore.setForeground(Color.YELLOW);
+		lblGameTopScore.setForeground(Color.WHITE);
 		gameFrame.add(lblGameTopScore);
+		
+		//Set up the world top score JLabel
+		lblAllTimeTopScore.setVisible(false);
+		lblAllTimeTopScore.setSize(500, 50);
+		lblAllTimeTopScore.setLocation(275,315);
+		lblAllTimeTopScore.setFont(fontGameOver);
+		lblAllTimeTopScore.setForeground(Color.WHITE);
+		gameFrame.add(lblAllTimeTopScore);
+
 		
 		//Game Over Score
 		lblGameOverScore.setVisible(false);
 		lblGameOverScore.setSize(textWidth, 50);
-		lblGameOverScore.setLocation(FIELD_WIDTH / 2 - textWidth / 2, FIELD_HEIGHT / 2 - 20);
+		lblGameOverScore.setLocation(390,260);
 		lblGameOverScore.setFont(fontGameOver);
 		lblGameOverScore.setForeground(Color.WHITE);
 		
@@ -288,7 +424,7 @@ public class Game implements ActionListener, KeyListener
 
 		JMenuBar menuBar;
 		JMenu menu;
-		JMenuItem menuItem;
+		JMenuItem menuItem, menuItem2;
 
 		//Create the menu bar.
 		menuBar = new JMenuBar();
@@ -353,6 +489,25 @@ public class Game implements ActionListener, KeyListener
 		  }
 		);
 		menu.add(menuItem);
+		
+		menu.addSeparator();
+		
+		menuItem2 = new JMenuItem("Reset HighScore");
+		menuItem2.setActionCommand("resetScore");
+		menuItem2.addActionListener(
+		  new ActionListener() 
+				{
+			    public void actionPerformed(ActionEvent e) 
+			    {
+			    	if (e.getActionCommand().equals("resetScore"))
+					{
+			    		resetHighScore();
+					}
+				}
+		  }
+		);
+		menu.add(menuItem2);
+		
 
 		//Difficulty Selector
 		menu.addSeparator();
@@ -380,6 +535,7 @@ public class Game implements ActionListener, KeyListener
 									lblGameOver.setVisible(false);
 									lblGameOverScore.setVisible(false);
 									lblGameTopScore.setVisible(false);
+									lblAllTimeTopScore.setVisible(false);
 									
 									setUpShooter();
 									setUpLargeAliens();
@@ -433,6 +589,7 @@ public class Game implements ActionListener, KeyListener
 									lblGameOver.setVisible(false);
 									lblGameOverScore.setVisible(false);
 									lblGameTopScore.setVisible(false);
+									lblAllTimeTopScore.setVisible(false);
 									
 									setUpShooter();
 									setUpLargeAliens();
@@ -488,41 +645,6 @@ public class Game implements ActionListener, KeyListener
 		rbMenuItem2.setEnabled(true);
 	}
 
-	public void setUpHighScore()
-	{
-		File file = new File("highscore.txt");
-		
-		try 
-		{	
-			if (file.exists()) {
-			    
-			} else {
-				BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
-				output4.write("0");
-				output4.close(); 
-			}
-			
-			BufferedReader input2 = new BufferedReader(new FileReader(file));
-			TOP_SCORE = Integer.parseInt(input2.readLine());
-			input2.close();
-			
-			if (PLAYER_SCORE > TOP_SCORE)
-			{
-				// Create a 'BufferedWriter' object from a 'FileWriter' object
-				BufferedWriter output2 = new BufferedWriter(new FileWriter(file));
-				output2.write("" + PLAYER_SCORE);
-				output2.close(); 
-				
-				BufferedReader input3 = new BufferedReader(new FileReader(file));
-				TOP_SCORE = Integer.parseInt(input3.readLine());
-				input3.close();
-			}
-		}
-		catch (Exception error)
-		{
-		}	
-	}
-	
 	public void actionPerformed(ActionEvent event)
 	{
 		
@@ -562,10 +684,13 @@ public class Game implements ActionListener, KeyListener
 			gameFrame.add(lblGameOverScore);
 			gameFrame.add(lblGameTopScore);
 			lblGameOverScore.setText("Score: " + PLAYER_SCORE);
-			lblGameTopScore.setText("Top Score " + TOP_SCORE);
+			lblGameTopScore.setText("Top Score: " + TOP_SCORE);
 			lblGameOver.setVisible(true);
 			lblGameOverScore.setVisible(true);
 			lblGameTopScore.setVisible(true);
+			lblAllTimeTopScore.setVisible(true);
+			
+			gameFrame.add(lblAllTimeTopScore);
 		}
 		
 		// Change the shooter's position if the player is pressing the left
@@ -853,6 +978,7 @@ public class Game implements ActionListener, KeyListener
 			lblGameOver.setVisible(false);
 			lblGameOverScore.setVisible(false);
 			lblGameTopScore.setVisible(false);
+			lblAllTimeTopScore.setVisible(false);
 			
 			lblGameScore.setText("Score: " + PLAYER_SCORE);
 			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
@@ -925,6 +1051,7 @@ public class Game implements ActionListener, KeyListener
 			lblGameOver.setVisible(false);
 			lblGameOverScore.setVisible(false);
 			lblGameTopScore.setVisible(false);
+			lblAllTimeTopScore.setVisible(false);
 			
 			setUpShooter();
 			setUpLargeAliens();
