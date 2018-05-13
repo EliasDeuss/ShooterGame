@@ -494,6 +494,14 @@ public class Game implements ActionListener, KeyListener
 		
 		try 
 		{	
+			if (file.exists()) {
+			    
+			} else {
+				BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+				output4.write("0");
+				output4.close(); 
+			}
+			
 			BufferedReader input2 = new BufferedReader(new FileReader(file));
 			TOP_SCORE = Integer.parseInt(input2.readLine());
 			input2.close();
