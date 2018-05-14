@@ -41,7 +41,7 @@ public class Game implements ActionListener, KeyListener
 	private int NUM_LARGE_ALIENS = 3;
 	private int NUM_BUNKERS = 7;
 	private int PLAYER_SCORE = 0;
-	private int PLAYER_LIVES = 0;
+	private int PLAYER_LIVES = 3;
 	private int PLAYER_TIME_LEFT = 5000;
 	private int TOP_SCORE;
 	private int DIF_BOMBS = 250;
