@@ -11,10 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -28,13 +25,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.Timer;
 
+
 public class Game implements ActionListener, KeyListener
 {
 	// Global Constants
 	public static final int FIELD_WIDTH = 900;
 	public static final int FIELD_HEIGHT = 600;
 	
-	private final File file = new File("file");
+	private final File file = new File("C://");
 	
 	// Local Constants
 	private final int TIMER_SPEED = 10;
@@ -104,7 +102,7 @@ public class Game implements ActionListener, KeyListener
 		setUpLargeAliens();
 		setUpSmallAliens();
 		setUpBunkers();
-		onlineStats();
+		//onlineStats();
 		
 		//setUpLife();
 		
@@ -119,63 +117,7 @@ public class Game implements ActionListener, KeyListener
 	
 	public void onlineStats()
 	{	 
-		String PLAYERTOPS = null;
-		String WORLDTOPS = null;
-		int PLAYERTOP;
-		int WORLDTOP;
-		String numbers;
-		String str;
 		
-		URL url;
-		try {
-		 url = new URL("url");
-		 
-		 BufferedReader input5 = new BufferedReader(new FileReader(file));
-	     str = input5.readLine();
-	       
-	     //extracting string
-	     PLAYERTOPS=str.replaceAll("[^0-9]", "");
-	     input5.close(); 
-		 
-		 URLConnection con = url.openConnection();
-	     BufferedReader in = new BufferedReader(new InputStreamReader(
-	                                    con.getInputStream()));
-         String inputLine;
-	     while ((inputLine = in.readLine()) != null) 
-
-	    WORLDTOPS=inputLine.replaceAll("[^0-9]", "");
-	     
-	    PLAYERTOP = Integer.parseInt(PLAYERTOPS);
-	    WORLDTOP = Integer.parseInt(WORLDTOPS);
-	    	
-	     if (PLAYERTOP >= WORLDTOP)
-	     {
-	    	 lblAllTimeTopScore.setText("World Top Score: " + System.getProperty("user.name")+ ": " + TOP_SCORE);
-	    	 
-	    	try {
-	    		con.setDoOutput(true); 
-	    		OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream()); 
-	    		out.write(System.getProperty("user.name")+ ": " + TOP_SCORE); 
-	    		out.close();
-	    		System.out.println("test");
-	    	}
-	    	catch (Exception error)
-	    	{
-	    	}
-	    	in.close();
-	    	
-	     } else
-	     {
-	    	 lblAllTimeTopScore.setText("World Top Score: " + inputLine);
-	    	 in.close();
-	     }
-	    
-	     
-		
-		} catch (Exception error)
-		{
-		}	
-	    
 
 	}
 		 
@@ -399,7 +341,7 @@ public void resetHighScore()
 		lblAllTimeTopScore.setLocation(275,315);
 		lblAllTimeTopScore.setFont(fontGameOver);
 		lblAllTimeTopScore.setForeground(Color.WHITE);
-		gameFrame.add(lblAllTimeTopScore);
+		//gameFrame.add(lblAllTimeTopScore);
 
 		
 		//Game Over Score
@@ -690,7 +632,7 @@ public void resetHighScore()
 			lblGameTopScore.setVisible(true);
 			lblAllTimeTopScore.setVisible(true);
 			
-			gameFrame.add(lblAllTimeTopScore);
+			//gameFrame.add(lblAllTimeTopScore);
 		}
 		
 		// Change the shooter's position if the player is pressing the left
