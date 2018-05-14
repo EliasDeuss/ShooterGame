@@ -32,7 +32,7 @@ public class Game implements ActionListener, KeyListener
 	public static final int FIELD_WIDTH = 900;
 	public static final int FIELD_HEIGHT = 600;
 	
-	private final File file = new File("C://");
+	private final File file = new File("C:");
 	
 	// Local Constants
 	private final int TIMER_SPEED = 10;
@@ -117,8 +117,6 @@ public class Game implements ActionListener, KeyListener
 	
 	public void onlineStats()
 	{	 
-		
-
 	}
 		 
 	
@@ -159,7 +157,6 @@ public void setUpHighScore()
 
 public void resetHighScore()
 {
-	
 	try 
 	{	
 		if (file.exists()) {
@@ -176,7 +173,8 @@ public void resetHighScore()
 	{
 	}	
 }
-
+	
+	
 	// Set the size and starting position of the player's shooter
 	public void setUpShooter()
 	{
@@ -365,7 +363,7 @@ public void resetHighScore()
 		//Menu
 
 		JMenuBar menuBar;
-		JMenu menu;
+		JMenu menu, menu2;
 		JMenuItem menuItem, menuItem2;
 
 		//Create the menu bar.
@@ -376,7 +374,12 @@ public void resetHighScore()
 		menu.setMnemonic(KeyEvent.VK_A);
 		menu.getAccessibleContext().setAccessibleDescription("File");
 		menuBar.add(menu);
-				
+		
+		menu2 = new JMenu("Difficulty");
+		menu2.setMnemonic(KeyEvent.VK_A);
+		menu2.getAccessibleContext().setAccessibleDescription("Game Difficulty");
+		menuBar.add(menu2);		
+		
 		//a group of JMenuItems
 		menuItem = new JMenuItem("Reset");
 		menuItem.setActionCommand("reset");
@@ -426,6 +429,7 @@ public void resetHighScore()
 						gameFrame.add(lblPlayerTime);
 						gameFrame.add(lblPlayerLives);
 						gameFrame.add(lblPlayerLevel);
+							
 					}
 				}
 		  }
@@ -497,7 +501,6 @@ public void resetHighScore()
 									lblPlayerLives.setVisible(true);
 									lblPlayerLevel.setVisible(true);
 									
-									timer.start();
 									gameFrame.repaint();
 									gameFrame.add(lblGameScore);
 									gameFrame.add(lblPlayerLives);
@@ -507,7 +510,7 @@ public void resetHighScore()
 						    }
 						  }
 						);
-		menu.add(rbMenuItem1);
+		menu2.add(rbMenuItem1);
 
 		rbMenuItem2 = new JRadioButtonMenuItem("Hard");
 		rbMenuItem2.setMnemonic(KeyEvent.VK_O);
@@ -526,7 +529,7 @@ public void resetHighScore()
 						    		gameFrame.getContentPane().removeAll();
 									missiles.removeAll(missiles);
 									aliens.removeAll(aliens);
-									bombs.removeAll(bombs);
+									//bombs.removeAll(bombs);
 									bunkers.removeAll(bunkers);
 									lblGameOver.setVisible(false);
 									lblGameOverScore.setVisible(false);
@@ -541,7 +544,7 @@ public void resetHighScore()
 									PLAYER_SCORE = 0;
 									PLAYER_TIME_LEFT = 5000;
 									PLAYER_LEVEL = 1;
-									DIF_BOMBS = 50;
+									DIF_BOMBS = 55;
 									
 									lblGameScore.setText("Score: " + PLAYER_SCORE);
 									lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
@@ -551,7 +554,6 @@ public void resetHighScore()
 									lblPlayerLives.setVisible(true);
 									lblPlayerLevel.setVisible(true);
 									
-									timer.start();
 									gameFrame.repaint();
 									gameFrame.add(lblGameScore);
 									gameFrame.add(lblPlayerLives);
@@ -561,10 +563,10 @@ public void resetHighScore()
 						    }
 						  }
 						);
-		menu.add(rbMenuItem2);
+		menu2.add(rbMenuItem2);
 		
 		//Exit Menu
-		menu.addSeparator();
+		//menu.addSeparator();
 		menuItem = new JMenuItem("Exit");
 		menuItem.setActionCommand("Exit");
 		menuItem.addActionListener(
@@ -603,15 +605,6 @@ public void resetHighScore()
 		//Time Count down
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
-		
-		//Stop's Game if time = 0
-		if (PLAYER_TIME_LEFT == 0)
-		{
-			lblGameOver.setVisible(true);
-			lblGameOverScore.setVisible(true);
-			
-			timer.stop();
-		}
 		
 		//Game Over Actions
 		if (PLAYER_LIVES == 0 || PLAYER_TIME_LEFT == 0)
@@ -924,23 +917,19 @@ public void resetHighScore()
 			
 			lblGameScore.setText("Score: " + PLAYER_SCORE);
 			lblPlayerLevel.setText("Level: " + PLAYER_LEVEL);
+			lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
 			
 			PLAYER_TIME_LEFT = PLAYER_TIME_LEFT + 1000;
 			NUM_SMALL_ALIENS = NUM_SMALL_ALIENS + 3;
 			NUM_LARGE_ALIENS = NUM_LARGE_ALIENS + 1;
+			BOMB_DROP = 0;
 			
 			if (DIF_BOMBS >= 50)
 			{
 				DIF_BOMBS = DIF_BOMBS - 25;
 			}
 			
-			if (PLAYER_LEVEL == 5)
-				PLAYER_LIVES = PLAYER_LIVES + 1; 
-			
-			if (PLAYER_LEVEL == 10)
-				PLAYER_LIVES = PLAYER_LIVES + 1;
-			
-			if (PLAYER_LEVEL == 15)
+			if (PLAYER_LEVEL % 5 == 0)
 				PLAYER_LIVES = PLAYER_LIVES + 1;
 			
 			setUpShooter();
@@ -966,7 +955,7 @@ public void resetHighScore()
 			gameFrame.add(lblPlayerLives);
 			
 			gameFrame.repaint();
-		}
+			}
 	}
 
 	// See if the player has PRESSED a key
