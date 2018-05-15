@@ -11,10 +11,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -25,16 +23,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.Timer;
 
-
 public class Game implements ActionListener, KeyListener
 {
 	// Global Constants
 	public static final int FIELD_WIDTH = 900;
 	public static final int FIELD_HEIGHT = 600;
 	
-	private final File file = new File("C:");
-	
 	// Local Constants
+	private final File file = new File("C://Users//Public//Documents//hs.txt");
 	private final int TIMER_SPEED = 10;
 	private final int SHOOTER_SPEED = 2;
 	private int NUM_SMALL_ALIENS = 8;
@@ -47,23 +43,18 @@ public class Game implements ActionListener, KeyListener
 	private int DIF_BOMBS = 250;
 	private int PLAYER_LEVEL = 1;
 	private int BOMB_DROP = 0;
-	private int LifeX, LifeY;
 	private int shooterX, shooterY, AlienX, AlienY;
-	
 	private String ALLTIMESCORE = "";
-	
 	private JFrame gameFrame;
 	private Timer timer;
+	private boolean play = true;
+	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
+	private boolean controlKeyPressed = false, missileFired = false;
 
 	//Images
 	private ImageIcon imgBackground = new ImageIcon(getClass().getResource("space.gif"));
 	private ImageIcon imgShooter = new ImageIcon(getClass().getResource("shooter.png"));
-	private ImageIcon imgLife = new ImageIcon(getClass().getResource("life.png")); //*
-	private JLabel LifeLabel = new JLabel(imgLife);
-
-	private boolean play = true;
-	private boolean pressedLeft = false, pressedRight = false, pressedSpace = false;
-	private boolean controlKeyPressed = false, missileFired = false, bombFired = false;
+	
 	private JLabel lblShooter = new JLabel(imgShooter);
 	private JLabel lblGameOverScore = new JLabel("Score: " + PLAYER_SCORE);
 	private JLabel lblGameScore = new JLabel("Score: " + PLAYER_SCORE);
@@ -72,8 +63,7 @@ public class Game implements ActionListener, KeyListener
 	private JLabel lblPlayerTime = new JLabel("Time Left: " + PLAYER_TIME_LEFT);
 	private JLabel lblPlayerLives = new JLabel("Lives: " + PLAYER_LIVES);
 	private JLabel lblAllTimeTopScore = new JLabel("World Top Score: " + ALLTIMESCORE);
-	private JLabel lblGamePaused = new JLabel("Pause");
-	
+	private JLabel lblGamePaused = new JLabel("Game Paused");
 	private JLabel lblGameOver = new JLabel("Game Over!");
 	private Font fontGameOver = new Font("Helvetica", Font.BOLD, 24);
 	private int textWidth = lblGameOver.getFontMetrics(fontGameOver).stringWidth(lblGameOver.getText());
@@ -101,11 +91,8 @@ public class Game implements ActionListener, KeyListener
 		setUpShooter();
 		setUpLargeAliens();
 		setUpSmallAliens();
-		setUpBunkers();
-		//onlineStats();
-		
-		//setUpLife();
-		
+		setUpBunkers();		
+	
 		gameFrame.addKeyListener(this);
 		gameFrame.setVisible(true);
 
@@ -115,64 +102,57 @@ public class Game implements ActionListener, KeyListener
 		timer.start();
 	}
 	
-	public void onlineStats()
-	{	 
-	}
-		 
-	
-	
-public void setUpHighScore()
-{
-	
-	try 
-	{	
-		if (file.exists()) {
-		    
-		} else {
-			BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
-			output4.write("0");
-			output4.close(); 
-		}
+	public void setUpHighScore()
+	{
+		try 
+		{	
+			if (file.exists()) {
+				
+			} else {
+				BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+				output4.write("0");
+				output4.close(); 
+			}
 		
-		BufferedReader input2 = new BufferedReader(new FileReader(file));
-		TOP_SCORE = Integer.parseInt(input2.readLine());
-		input2.close();
-		
-		if (PLAYER_SCORE > TOP_SCORE)
-		{
-			// Create a 'BufferedWriter' object from a 'FileWriter' object
-			BufferedWriter output2 = new BufferedWriter(new FileWriter(file));
-			output2.write("" + PLAYER_SCORE);
-			output2.close(); 
+			BufferedReader input2 = new BufferedReader(new FileReader(file));
+			TOP_SCORE = Integer.parseInt(input2.readLine());
+			input2.close();
 			
-			BufferedReader input3 = new BufferedReader(new FileReader(file));
-			TOP_SCORE = Integer.parseInt(input3.readLine());
-			input3.close();
+			if (PLAYER_SCORE > TOP_SCORE)
+			{
+				// Create a 'BufferedWriter' object from a 'FileWriter' object
+				BufferedWriter output2 = new BufferedWriter(new FileWriter(file));
+				output2.write("" + PLAYER_SCORE);
+				output2.close(); 
+			
+				BufferedReader input3 = new BufferedReader(new FileReader(file));
+				TOP_SCORE = Integer.parseInt(input3.readLine());
+				input3.close();
+			}
 		}
+		catch (Exception error)
+		{
+		}	
 	}
-	catch (Exception error)
-	{
-	}	
-}
 
-public void resetHighScore()
-{
-	try 
-	{	
-		if (file.exists()) {
-			BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
-			output4.write("0");
-			output4.close(); 
-		} else {
-			BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
-			output4.write("0");
-			output4.close(); 
-		}
-	}
-	catch (Exception error)
+	public void resetHighScore()
 	{
-	}	
-}
+		try 
+		{	
+			if (file.exists()) {
+				BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+				output4.write("0");
+				output4.close(); 
+			} else {
+				BufferedWriter output4 = new BufferedWriter(new FileWriter(file));
+				output4.write("0");
+				output4.close(); 
+			}
+		}
+		catch (Exception error)
+		{
+		}	
+	}
 	
 	
 	// Set the size and starting position of the player's shooter
@@ -231,7 +211,6 @@ public void resetHighScore()
 		}
 	}
 	
-	
 	public void setUpBunkers()
 	{
 		Bunker tempBunker = new Bunker(0, 0);
@@ -246,29 +225,6 @@ public void resetHighScore()
 
 			// Create a new 'Bunker' object and add it to the 'bunker' ArrayList 
 			bunkers.add(new Bunker(x, y));
-		}
-	}
-	
-	public void setUpLife()
-	{
-		Life tempLivesPacks = new Life(0, 0);
-		int LivesPacksWidth = tempLivesPacks.getWidth();
-		int LivesPacksHeight = tempLivesPacks.getHeight();
-
-		for (int i = 0; i < 1; i++)
-		{
-			// Set the starting positions of each of the bunkers being placed
-		int x = (int) (Math.random() * (FIELD_WIDTH - LivesPacksWidth - 7) + 1);
-		int y = (int) (Math.random() * (FIELD_HEIGHT*3/4 - LivesPacksHeight - 26 - lblShooter.getHeight() - 60));
-		
-		LifeX = x;
-		LifeY = y;
-		
-			// Create a new 'Bunker' object and add it to the 'bunker' ArrayList 
-			LifeLabel.setVisible(true);
-			LifeLabel.setSize(textWidth, 40);
-			LifeLabel.setLocation(x,y);
-			gameFrame.add(LifeLabel);
 		}
 	}
 	
@@ -351,17 +307,16 @@ public void resetHighScore()
 		
 		//Pause Menu
 		lblGamePaused.setVisible(false);
-		lblGamePaused.setSize(textWidth, 40);
-		lblGamePaused.setLocation(410,250);
+		lblGamePaused.setSize(200, 40);
+		lblGamePaused.setLocation(365,250);
 		lblGamePaused.setFont(fontGameOver);
 		lblGamePaused.setForeground(Color.WHITE);
 		gameFrame.add(lblGamePaused);
 	}
 	
+	//Sets up the Menu Bar
 	public void setUpMenuBar()
 	{
-		//Menu
-
 		JMenuBar menuBar;
 		JMenu menu, menu2;
 		JMenuItem menuItem, menuItem2;
@@ -390,6 +345,10 @@ public void resetHighScore()
 			    {
 			    	if (e.getActionCommand().equals("reset"))
 					{
+			    		NUM_SMALL_ALIENS = 8;
+						NUM_LARGE_ALIENS = 3;
+						NUM_BUNKERS = 7;
+						
 			    		gameFrame.getContentPane().removeAll();
 						missiles.removeAll(missiles);
 						aliens.removeAll(aliens);
@@ -409,6 +368,8 @@ public void resetHighScore()
 						PLAYER_SCORE = 0;
 						PLAYER_LIVES = 3;
 						PLAYER_LEVEL = 1;
+						BOMB_DROP = 0;
+						DIF_BOMBS = 250;
 						PLAYER_TIME_LEFT = 5000;
 						
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
@@ -419,9 +380,6 @@ public void resetHighScore()
 						lblPlayerLives.setVisible(true);
 						lblPlayerLevel.setVisible(true);
 						
-						NUM_SMALL_ALIENS = 8;
-						NUM_LARGE_ALIENS = 3;
-						NUM_BUNKERS = 7;
 						
 						timer.start();
 						gameFrame.repaint();
@@ -435,7 +393,6 @@ public void resetHighScore()
 		  }
 		);
 		menu.add(menuItem);
-		
 		menu.addSeparator();
 		
 		menuItem2 = new JMenuItem("Reset HighScore");
@@ -453,10 +410,10 @@ public void resetHighScore()
 		  }
 		);
 		menu.add(menuItem2);
-		
-
+	
 		//Difficulty Selector
 		menu.addSeparator();
+		
 		ButtonGroup group = new ButtonGroup();
 		rbMenuItem1 = new JRadioButtonMenuItem("Normal");
 		rbMenuItem1.setSelected(true);
@@ -492,6 +449,7 @@ public void resetHighScore()
 									PLAYER_TIME_LEFT = 5000;
 									PLAYER_LEVEL = 1;
 									DIF_BOMBS = 250;
+									BOMB_DROP = 0;
 									
 									lblGameScore.setText("Score: " + PLAYER_SCORE);
 									lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
@@ -544,6 +502,7 @@ public void resetHighScore()
 									PLAYER_SCORE = 0;
 									PLAYER_TIME_LEFT = 5000;
 									PLAYER_LEVEL = 1;
+									BOMB_DROP = 0;
 									DIF_BOMBS = 55;
 									
 									lblGameScore.setText("Score: " + PLAYER_SCORE);
@@ -583,25 +542,12 @@ public void resetHighScore()
 						  }
 						);
 		menu.add(menuItem);
-			
 		gameFrame.setJMenuBar(menuBar);
-		
 		rbMenuItem2.setEnabled(true);
 	}
 
 	public void actionPerformed(ActionEvent event)
 	{
-		
-//		if (PLAYER_LIVES < 1)
-//		{
-//			setUpLife();
-//		}
-//		
-//		if (PLAYER_LEVEL == 6)
-//		{
-//			setUpLife();
-//		}
-		
 		//Time Count down
 		PLAYER_TIME_LEFT = PLAYER_TIME_LEFT - 1;
 		lblPlayerTime.setText("Time Left: " + PLAYER_TIME_LEFT);
@@ -712,8 +658,6 @@ public void resetHighScore()
 
 			// Create a new 'Bomb' object and add it to the 'Bomb' ArrayList 
 			bombs.add(new Bomb(x, y));
-
-			bombFired = true;
 		}
 
 		// Draw the aliens (all types)
@@ -760,25 +704,13 @@ public void resetHighScore()
 		gameFrame.repaint();
 
 		checkCollisions();
-
-		// This line synchronizes the graphics state by flushing buffers containing
-		// graphics events and forcing the frame drawing to happen now; otherwise,
-		// it can sometimes take a few extra milliseconds for the drawing to take
-		// place, which can result in jerky graphics movement; this line ensures
-		// that the display is up-to-date; it is useful for animation, since it can
-		// reduce or eliminate flickering
+		
 		Toolkit.getDefaultToolkit().sync();
 	}
 
-	// For every alien and missile currently on the playing field, create a
-	// "rectangle" around both the alien and the missile, and then check to
-	// see if the two rectangles intersect each other
+	//Checks for collisions between objects
 	public void checkCollisions()
 	{
-		// The 'try-catch' exception trapping is needed to prevent an error from
-		// occurring when an element is removed from the 'aliens' and 'missiles'
-		// ArrayLists, causing the 'for' loops to end prematurely 
-		
 		//Missiles hit alien
 		for (int i = 0; i < aliens.size(); i++)
 			for (int j = 0; j < missiles.size(); j++)
@@ -789,9 +721,7 @@ public void resetHighScore()
 																aliens.get(i).getWidth(), aliens.get(i).getHeight());
 					Rectangle rMissile = new Rectangle(missiles.get(j).getX(), missiles.get(j).getY(),
 																  missiles.get(j).getWidth(), missiles.get(j).getHeight());
-//					Rectangle rLife = new Rectangle(LifeX, LifeY,
-//							  bombs.get(j).getWidth(), bombs.get(j).getHeight());
-
+					
 					// If an alien and a missile intersect each other, remove both
 					// of them from the playing field and the ArrayLists
 					if (rAlien.intersects(rMissile))
@@ -802,18 +732,9 @@ public void resetHighScore()
 						missiles.remove(j);
 						
 						PLAYER_SCORE = PLAYER_SCORE + 5;
-						
+				
 						lblGameScore.setText("Score: " + PLAYER_SCORE);
 					}
-					
-//					if (rLife.intersects(rMissile))
-//					{
-//						LifeLabel.setVisible(false);
-//						
-//						PLAYER_LIVES = PLAYER_LIVES + 1;
-//						
-//						lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
-//					}
 				}
 				catch (Exception error)
 				{
@@ -937,7 +858,6 @@ public void resetHighScore()
 			setUpSmallAliens();
 			setUpBunkers();
 			
-			
 			for (int i = 0; i < aliens.size(); i++)
 				{
 					Alien alien = aliens.get(i);
@@ -995,6 +915,7 @@ public void resetHighScore()
 			PLAYER_LIVES = 3;
 			PLAYER_LEVEL = 1;
 			PLAYER_TIME_LEFT = 5000;
+			DIF_BOMBS = 250;
 			
 			lblGameScore.setText("Score: " + PLAYER_SCORE);
 			lblPlayerLives.setText("Lives: " + PLAYER_LIVES);
@@ -1020,17 +941,18 @@ public void resetHighScore()
 		{	
 			if (play == true)
 			{
-				timer.stop();
+				gameFrame.add(lblGamePaused);
 				play = false;
 				lblGamePaused.setVisible(true);
+				timer.stop();
 			}
 			else
 			{
-				timer.start();
+				gameFrame.add(lblGamePaused);
 				play = true;
 				lblGamePaused.setVisible(false);
+				timer.start();
 			}
-			
 		}
 
 		if (key == KeyEvent.VK_LEFT) // LEFT arrow
@@ -1066,9 +988,3 @@ public void resetHighScore()
 	{
 	}
 }
-
-//Points Count
-// 5 - Pause / Unpause
-//10 - Ctrl-X quit
-//10 - implement scoring system
-
